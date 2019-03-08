@@ -101,7 +101,11 @@ class ModelManager(object):
                             epochs=self.num_epochs, verbose=1,
                             callbacks=callbacks, validation_data=self.val_data,
                             class_weight=class_weights_dict)
-
+        
+        def load_saved(self):
+            
+    # def test(self):
+    #     self.model = 
     # def test_images():
 
     # def test_video()

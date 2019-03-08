@@ -16,16 +16,11 @@ import pandas as pd
 from utils.preprocessor import preprocess_input
 
 datasets = ['AffectNet', 'FER2013', 'KDEF', 'ExpW']
-# datasets = ['AffectNet', 'KDEF', 'ExpW']
 input_shape = (64, 64, 1)
-# model_manager = ModelManager(datasets,
-#                              input_shape)
 num_classes = 7
 ds_root = '/home/ubuntu/Desktop'
 ds_dict = {}
 split = 0.1
-# LOAD DATASETS INTO DICTIONARY
-
 
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
