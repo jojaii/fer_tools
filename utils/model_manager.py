@@ -102,8 +102,8 @@ class ModelManager(object):
                             callbacks=callbacks, validation_data=self.val_data,
                             class_weight=class_weights_dict)
 
-    def load_saved(self):
-        self.model = m_path
+    def load_saved(self, model_path):
+        self.model = model_path
     # def test(self):
     #     self.model = 
     # def test_images():

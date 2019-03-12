@@ -147,7 +147,7 @@ split = .20
 print("Loading datasets...")
 for i, ds_name in enumerate(ds_names):
 
-    csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_us.csv"
+    csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_bw.csv"
     header = "["+str(ds_name)+"]"
     data_loader = DSManager(ds_name,
                             ds_root=ds_root,
@@ -178,13 +178,14 @@ for i, ds_name in enumerate(ds_names):
     test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
     test_data = (test_faces, test_labels)
 
-    # KERAS TEST    
-    m_path = "models/FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5"
+    # KERAS TEST   
+    # /home/ubuntu/Repos/fer_tools/models/ 
+    m_path = "models/FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5"
     model = keras_load(m_path)
     kr_accuracy = keras_test(model, test_data)
 
     # TF TEST
-    m_path = "models/FER2013_64_10_bw_mini_XCEPTION.73-0.64.pb"
+    m_path = "models/FER2013_64_20_bw_mini_XCEPTION.57-0.61.pb"
     # sess, imageTensor, scores = tf_load(m_path)
     # tf_accuracy = tf_test(sess, test_data, imageTensor, scores)
     tf_accuracy = tf_run(m_path, test_data)

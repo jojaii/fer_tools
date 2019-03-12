@@ -7,89 +7,80 @@ Description: Train emotion classification model
 """
 
 import os
-from utils.model_manager import ModelManager
+# from utils.model_manager import ModelManager
 from utils.data_manager import DSManager
-from utils.common import encode_onehot, get_labels, shuffle_in_unison
-from sklearn.utils import class_weight
+from utils.common import shuffle_in_unison
+# from sklearn.utils import class_weight
 import numpy as np
-import pandas as pd
+# import pandas as pd
 from utils.preprocessor import preprocess_input
 from keras.models import load_model
 import cv2
-import tensorflow as tf
+import time
+# import tensorflow as tf
 
 def keras_load(m_path):
     model = load_model(m_path)
     return model
 
+
 def keras_test(model, data):
     correct = 0
     images = data[0]
     actual = data[1]
+    sum_time = 0
     for i, image in enumerate(images):
         image = cv2.resize(image, (64, 64))
+        # image = preprocess_input(image, True)
+        start = time.time()
+        image = np.expand_dims(image, 0)
+        image = np.expand_dims(image, -1)
         prediction = model.predict(image)
         prediction = np.argmax(prediction)
+        sum_time += time.time() - start
         if prediction == actual[i]:
             correct += 1
 
     accuracy = correct/len(images)
+    print("keras latency", (sum_time/(len(images))))
 
     return accuracy
 
-#  "models/FER201364_20_bw_mini_XCEPTION.57-0.61.pb"
-def tf_load(m_path):
-    pb_file = m_path
-    detectionGraph = tf.Graph()
-    with detectionGraph.as_default():
-        odGraphDef = tf.GraphDef()
-        with tf.gfile.GFile(pb_file, 'rb') as fid:
-            serializedGraph = fid.read()
-            odGraphDef.ParseFromString(serializedGraph)
-            tf.import_graph_def(odGraphDef, name = '')
-
-    with detectionGraph.as_default():
-        config = tf.ConfigProto() #device_count = {'GPU': 0}
-        config.gpu_options.allow_growth = True
-        sess = tf.Session(graph = detectionGraph, config = config)
-
-    imageTensor = detectionGraph.get_tensor_by_name('input_1:0')
-    scores = detectionGraph.get_tensor_by_name('predictions/Softmax:0')
-
-    return sess, imageTensor, scores
-
-def tf_test(sess, data, imageTensor, scores):
-    correct = 0
-    images = data[0]
-    actual = data[1]
-    for i, image in enumerate(images):
-        image = cv2.resize(image, (64, 64))
-        (scores) = sess.run([scores],
-                            feed_dict={imageTensor: image})
-        prediction = np.argmax(scores)
-        if prediction == actual[i]:
-            correct += 1
-
-    accuracy = correct/len(data)
-
-    return accuracy
 
 ds_root = '/home/ubuntu/Desktop'
-# ds_names = ['AffectNet', 'FER2013', 'KDEF', 'ExpW']
-ds_names = ['FER2013']
-m_root = ""
+ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
+# ds_names = ['FER2013']
+m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
-m_names = ["KDEF_mini_XCEPTION.158-1.00.hdf5",
-           "ExpW_mini_XCEPTION.36-1.00.hdf5"]
+m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
+           "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
+           "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
+           "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
+# m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
+#            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
+#            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
+#            "ExpW_64_20_bw_mini_XCEPTION.39-0.55.hdf5"]
+# m_paths = ["AffectNet_64_10_us_mini_XCEPTION.82-0.55.hdf5",
+#            "FER2013_64_10_us_mini_XCEPTION.57-0.54.hdf5",
+#            "KDEF_64_10_us_mini_XCEPTION.67-0.23.hdf5",
+#            "ExpW_64_10_us_mini_XCEPTION.56-0.42.hdf5"]
+# m_paths = ["AffectNet_64_20_us_mini_XCEPTION.85-0.58.hdf5",
+#            "FER2013_64_20_us_mini_XCEPTION.45-0.48.hdf5",
+#            "KDEF_64_20_us_mini_XCEPTION.56-0.19.hdf5",
+#            "ExpW_64_20_us_mini_XCEPTION.42-0.42.hdf5"]
+
 input_shape = (64, 64)
+split = .1
+type = "bw"
+accuracies = []
 
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
 for i, ds_name in enumerate(ds_names):
     # load/create csv
 
-    csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_us.csv"
+    csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_"+type+".csv"
     header = "["+str(ds_name)+"]"
     # TODO: default input for csv_file
     data_loader = DSManager(ds_name,
@@ -107,18 +98,15 @@ for i, ds_name in enumerate(ds_names):
 
     # load train, test, val
 
-    # print(header + " Grouping data...")
-    # print(data_loader.split_counts)
-    data_loader.emotions = pd.get_dummies(data_loader.emotions).as_matrix()
     data_loader.faces = preprocess_input(data_loader.faces)
-    for i, split_count in enumerate(data_loader.split_counts):
+    for j, split_count in enumerate(data_loader.split_counts):
         maximum = sum(split_count)
-        if i == 0:
+        if j == 0:
             # train_faces = data_loader.faces[:split_count[0]]
             # train_labels = data_loader.emotions[:split_count[0]]
             # val_faces = data_loader.faces[split_count[0]:split_count[0]+split_count[1]]
             # val_labels = data_loader.emotions[split_count[0]:split_count[0]+split_count[1]]
-            # test_faces = data_loader.faces[split_count[0]+split_count[1]:maximum]
+            test_faces = data_loader.faces[split_count[0]+split_count[1]:maximum]
             test_labels = data_loader.emotions[split_count[0]+split_count[1]:maximum]
             lindex = maximum
         else:
@@ -126,13 +114,20 @@ for i, ds_name in enumerate(ds_names):
             # train_labels = np.vstack((train_labels, data_loader.emotions[lindex:lindex+split_count[0]]))
             # val_faces = np.vstack((val_faces, data_loader.faces[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
             # val_labels = np.vstack((val_labels, data_loader.emotions[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
-            # test_faces = np.vstack((test_faces, data_loader.faces[lindex+split_count[0]+split_count[1]:lindex+maximum]))
-            test_labels = np.vstack((test_labels, data_loader.emotions[lindex+split_count[0]+split_count[1]:lindex+maximum]))
+            test_faces = np.vstack((test_faces, data_loader.faces[lindex+split_count[0]+split_count[1]:lindex+maximum]))
+            test_labels = np.hstack((test_labels, data_loader.emotions[lindex+split_count[0]+split_count[1]:lindex+maximum]))
             lindex = lindex + maximum
 
     # train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
     # val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
     test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
+    test_data = (test_faces, test_labels)
+    
+    # KERAS TEST   
+    # /home/ubuntu/Repos/fer_tools/models/ 
+    m_path = os.path.join(m_root, m_paths[i])
+    model = keras_load(m_path)
+    accuracies.append(keras_test(model, test_data))
 
     # ## DONT FORGET TO PREPROCESS
     # model_loader = ModelManager(ds_name)
@@ -145,15 +140,16 @@ for i, ds_name in enumerate(ds_names):
     # del(model_loader)
 
     # # Mmanager.test()
-    # del(data_loader)
+    del(data_loader)
 
     # # del(train_faces)
     # # del(train_labels)
     # # del(val_faces)
     # # del(val_labels)
-    # del(test_faces)
-    # del(test_labels)
+    del(test_faces)
+    del(test_labels)
 
+print(accuracies)
 
 # from keras.models import load_model
 
