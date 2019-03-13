@@ -74,6 +74,7 @@ input_shape = (64, 64)
 split = .1
 type = "bw"
 accuracies = []
+ds_dict = {}
 
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
@@ -97,31 +98,33 @@ for i, ds_name in enumerate(ds_names):
         data_loader.load_split_CSV()
 
     # load train, test, val
-
     data_loader.faces = preprocess_input(data_loader.faces)
-    for j, split_count in enumerate(data_loader.split_counts):
-        maximum = sum(split_count)
-        if j == 0:
-            # train_faces = data_loader.faces[:split_count[0]]
-            # train_labels = data_loader.emotions[:split_count[0]]
-            # val_faces = data_loader.faces[split_count[0]:split_count[0]+split_count[1]]
-            # val_labels = data_loader.emotions[split_count[0]:split_count[0]+split_count[1]]
-            test_faces = data_loader.faces[split_count[0]+split_count[1]:maximum]
-            test_labels = data_loader.emotions[split_count[0]+split_count[1]:maximum]
-            lindex = maximum
-        else:
-            # train_faces = np.vstack((train_faces, data_loader.faces[lindex:lindex+split_count[0]]))
-            # train_labels = np.vstack((train_labels, data_loader.emotions[lindex:lindex+split_count[0]]))
-            # val_faces = np.vstack((val_faces, data_loader.faces[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
-            # val_labels = np.vstack((val_labels, data_loader.emotions[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
-            test_faces = np.vstack((test_faces, data_loader.faces[lindex+split_count[0]+split_count[1]:lindex+maximum]))
-            test_labels = np.hstack((test_labels, data_loader.emotions[lindex+split_count[0]+split_count[1]:lindex+maximum]))
-            lindex = lindex + maximum
+    ds_dict[ds_name] = [data_loader.faces,
+                        data_loader.emotions,
+                        mini_XCEPTION(input_shape, num_classes)]
+    # for j, split_count in enumerate(data_loader.split_counts):
+    #     maximum = sum(split_count)
+    #     if j == 0:
+    #         # train_faces = data_loader.faces[:split_count[0]]
+    #         # train_labels = data_loader.emotions[:split_count[0]]
+    #         # val_faces = data_loader.faces[split_count[0]:split_count[0]+split_count[1]]
+    #         # val_labels = data_loader.emotions[split_count[0]:split_count[0]+split_count[1]]
+    #         test_faces = data_loader.faces[split_count[0]+split_count[1]:maximum]
+    #         test_labels = data_loader.emotions[split_count[0]+split_count[1]:maximum]
+    #         lindex = maximum
+    #     else:
+    #         # train_faces = np.vstack((train_faces, data_loader.faces[lindex:lindex+split_count[0]]))
+    #         # train_labels = np.vstack((train_labels, data_loader.emotions[lindex:lindex+split_count[0]]))
+    #         # val_faces = np.vstack((val_faces, data_loader.faces[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
+    #         # val_labels = np.vstack((val_labels, data_loader.emotions[lindex+split_count[0]:lindex+split_count[0]+split_count[1]]))
+    #         test_faces = np.vstack((test_faces, data_loader.faces[lindex+split_count[0]+split_count[1]:lindex+maximum]))
+    #         test_labels = np.hstack((test_labels, data_loader.emotions[lindex+split_count[0]+split_count[1]:lindex+maximum]))
+    #         lindex = lindex + maximum
 
-    # train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
-    # val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
-    test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
-    test_data = (test_faces, test_labels)
+    # # train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
+    # # val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
+    # test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
+    # test_data = (test_faces, test_labels)
     
     # KERAS TEST   
     # /home/ubuntu/Repos/fer_tools/models/ 
