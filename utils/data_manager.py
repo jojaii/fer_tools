@@ -14,7 +14,7 @@ class DSManager(object):
 
     def __init__(self, ds_name='FER2013',
                  ds_root="/home/Ubuntu/Datasets",
-                 image_size=(48, 48),
+                 image_size=(64, 64),
                  csv_file=""):
         self.ds_name = ds_name
         self.ds_root = ds_root
@@ -320,7 +320,7 @@ class DSManager(object):
             # print(len(max_indices))
             # if highest vote has value 0, then that means
             # the highest voted is not part of the 7 traditional
-            # expressions (so it's contempt, unknown, or NF) 
+            # expressions (so it's contempt, unknown, or NF)
             if np.max(image_labels) == 0:
                 # get label from original FER labels, not from FER+
                 emotions.append(int(emotions_FER[i]))
@@ -328,13 +328,13 @@ class DSManager(object):
             # if there is more than one max index...
             elif len(max_indices) > 1:
                 # append disgust (index 1) because it has the lowest number of data
-                if 1 in max_indices: 
+                if 1 in max_indices:
                     emotions.append(1)
                 # append fear (index 2) for similar reason
-                elif 2 in max_indices: 
+                elif 2 in max_indices:
                     emotions.append(2)
                 # append angry (index 0) for similar reason
-                elif 0 in max_indices: 
+                elif 0 in max_indices:
                     emotions.append(0)
                 # append emotion with least number of occurences in temporary list
                 else:
@@ -349,6 +349,29 @@ class DSManager(object):
 
         self.faces = faces
         self.emotions = np.asarray(emotions)
+
+    def _load_SFEW(self):
+        classes = get_class_to_arg(self.ds_name)
+        dataset_path = "/home/ubuntu/Datasets/SFEW_ssd/TrainVal"
+        # load images in folder specified
+        labels = []
+        faces = []
+        for folder, _, filenames in os.walk(dataset_path):
+            for filename in filenames:
+                if filename.lower().endswith(('.png')):
+                    f_name = os.path.join(folder, filename)
+                    label = folder.split('/')[-1].lower()
+                    labels.append(classes[label])
+                    face = cv2.imread(f_name,
+                                      cv2.IMREAD_GRAYSCALE)
+                    face = cv2.resize(face.astype('uint8'),
+                                      self.image_size)
+                    faces.append(face.astype('float32'))
+
+        faces = np.asarray(faces)
+        faces = np.expand_dims(faces, -1)
+        self.faces = faces
+        self.emotions = np.asarray(labels)
 
 
 if __name__ == '__main__':

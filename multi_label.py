@@ -7,16 +7,11 @@ Description: Train emotion classification model
 """
 
 import os
-# from utils.model_manager import ModelManager
 from utils.data_manager import DSManager
-# from sklearn.utils import class_weight
 import numpy as np
-# import pandas as pd
 from utils.preprocessor import preprocess_input
 from keras.models import load_model
 import cv2
-import time
-# import tensorflow as tf
 
 
 def keras_load(m_path):
@@ -25,16 +20,12 @@ def keras_load(m_path):
 
 
 def keras_test(model, data):
-    correct = 0
     images = data[0]
-    actual = data[1]
-    sum_time = 0
     probs = []
     preds = []
     for i, image in enumerate(images):
         image = cv2.resize(image, (64, 64))
         # image = preprocess_input(image, True)
-        # start = time.time()
         image = np.expand_dims(image, 0)
         image = np.expand_dims(image, -1)
         pred = model.predict(image)
@@ -48,7 +39,6 @@ np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
 ds_root = '/home/ubuntu/Desktop'
 ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
-# ds_names = ['FER2013']
 m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
@@ -147,7 +137,6 @@ for i, ds_name in enumerate(ds_names):
     f = open(f_name, "w")
     temp = ','.join(map(str, columns))
     f.write(temp+"/n")
-    # f.write(columns)
     for i, line in enumerate(all_labels):
         f.write(line+"\n")
     f.close()

@@ -13,10 +13,14 @@ Github: https://github.com/oarriaga
 Description: Train emotion classification model
 """
 
+import os
+
+# uncomment to run on CPU
+os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 
-import os
 # from model_manager import ModelManager
 from utils.data_manager import DSManager
 from utils.common import shuffle_in_unison, strat_sample, group, truncate, combine_classes, generate_csv, count_labels
@@ -32,7 +36,8 @@ data_generator = ImageDataGenerator(featurewise_center=False,
                                     zoom_range=.1,
                                     horizontal_flip=True)
 
-datasets = ['AffectNet', 'FER2013', 'KDEF', 'ExpW']
+# datasets = ['AffectNet', 'FER2013', 'KDEF', 'ExpW']
+datasets = ['SFEW']
 # datasets = ['AffectNet']
 # datasets = ['KDEF']#, 'ExpW']
 input_shape = (64, 64, 1)
@@ -42,6 +47,7 @@ num_classes = 7
 ds_root = '/home/ubuntu/Datasets'
 ds_dict = {}
 split = 0.1  # TODO: should be changeable by arg
+
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
 for i, ds_name in enumerate(datasets):
@@ -56,10 +62,10 @@ for i, ds_name in enumerate(datasets):
     try:
         csv_file = open(os.path.join(ds_root, ds_name, csv_name))
     except:
-        print(header + " File "+csv_file+" does not exist. \
-              Loading and converting to csv.")
-        print(header + " Loading and converting to csv \
-              with image size " + str(input_shape[:2]))
+        print(header + " File "+csv_name+" does not exist. " +
+              "Loading and converting to csv.")
+        print(header + " Loading and converting to csv " +
+              "with image size " + str(input_shape[:2]))
         data_loader.get_data()
         data_loader.generate_csv()
     else:

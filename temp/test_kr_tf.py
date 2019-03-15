@@ -75,7 +75,6 @@ def tf_run(m_path, data):
         imageTensor = detectionGraph.get_tensor_by_name('input_2:0')
         scores = detectionGraph.get_tensor_by_name('predictions/Softmax:0')
 
-        
         image = np.expand_dims(image, 0)
         image = np.expand_dims(image, -1)
         (scores) = sess.run([scores],

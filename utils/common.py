@@ -213,43 +213,44 @@ def encode_onehot(labels):
     return onehot_array
 
 
-def get_labels(dataset_name):
+def get_labels(ds_name):
     # TODO: set in settings.py
-    if dataset_name in ['FER2013', 'ExpW', 'ExpWCSV']:
+    if ds_name in ['FER2013', 'ExpW', 'ExpWCSV', 'SFEW']:
         return {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy',
                 4: 'sad', 5: 'surprise', 6: 'neutral'}
-    elif dataset_name == 'imdb':
+    elif ds_name == 'imdb':
         return {0: 'woman', 1: 'man'}
-    elif dataset_name in ['KDEF', 'KDEFCSV']:
+    elif ds_name in ['KDEF', 'KDEFCSV']:
         return {0: 'AN', 1: 'DI', 2: 'AF', 3: 'HA', 4: 'SA', 5: 'SU', 6: 'NE'}
-    elif dataset_name in ['AffectNet', 'AffectNetCSV']:
-        return {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise', 
+    elif ds_name in ['AffectNet', 'AffectNetCSV']:
+        return {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise',
                 4: 'fear', 5: 'disgust', 6: 'anger'}
     else:
         raise Exception('Invalid dataset name')
 
 
-def get_class_to_arg(dataset_name='FER2013'):
+def get_class_to_arg(ds_name='FER2013'):
     # TODO: set in settings.py
-    if dataset_name in ['FER2013', 'ExpW', 'ExpWCSV']:
+    if ds_name in ['FER2013', 'ExpW', 'ExpWCSV', 'SFEW']:
         return {'angry': 0, 'disgust': 1, 'fear': 2, 'happy': 3, 'sad': 4,
                 'surprise': 5, 'neutral': 6}
-    elif dataset_name == 'imdb':
+    elif ds_name == 'imdb':
         return {'woman': 0, 'man': 1}
-    elif dataset_name in ['KDEF', 'KDEFCSV']:
+    elif ds_name in ['KDEF', 'KDEFCSV']:
         return {'AN': 0, 'DI': 1, 'AF': 2, 'HA': 3, 'SA': 4, 'SU': 5, 'NE': 6}
-    elif dataset_name in ['AffectNet', 'AffectNetCSV']:
-        return {'neutral': 0, 'happy': 1, 'sad': 2, 'surprise': 3, 
+    elif ds_name in ['AffectNet', 'AffectNetCSV']:
+        return {'neutral': 0, 'happy': 1, 'sad': 2, 'surprise': 3,
                 'fear': 4, 'disgust': 5, 'anger': 6}
     else:
         raise Exception('Invalid dataset name')
+
 
 # GROUP (according to class)
 def group(array, labels, num_classes):
     grouped_classes = [[] for x in range(num_classes)]
     for i, label in enumerate(labels):
         grouped_classes[label].append(array[i])
-    
+
     return grouped_classes
 
 

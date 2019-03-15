@@ -1,0 +1,29 @@
+Using TensorFlow backend.
+Loading datasets...
+[AffectNet] File AffectNet_64_10_bw.csv exists. Loading file...
+sys:1: DtypeWarning: Columns (3) have mixed types. Specify dtype option on import or set low_memory=False.
+2019-03-14 07:43:28.112686: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2019-03-14 07:43:28.402579: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:964] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-03-14 07:43:28.402940: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1411] Found device 0 with properties: 
+name: GeForce GTX 1050 major: 6 minor: 1 memoryClockRate(GHz): 1.493
+pciBusID: 0000:01:00.0
+totalMemory: 3.95GiB freeMemory: 3.46GiB
+2019-03-14 07:43:28.402955: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1490] Adding visible gpu devices: 0
+2019-03-14 07:43:29.463094: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-03-14 07:43:29.463163: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977]      0 
+2019-03-14 07:43:29.463179: I tensorflow/core/common_runtime/gpu/gpu_device.cc:990] 0:   N 
+2019-03-14 07:43:29.463416: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1103] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 3180 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1050, pci bus id: 0000:01:00.0, compute capability: 6.1)
+[AffectNet] Generating embeddings for add_4 layer...
+[AffectNet] Generating embeddings for conv2d_7 layer...
+[AffectNet] Saving embeddings to bin/AffectNet_embds10_bw.csv.
+ Please wait...
+[AffectNet] Embeddings csv saved.
+[ExpW] File ExpW_64_10_bw.csv exists. Loading file...
+Traceback (most recent call last):
+  File "create_embeddings.py", line 115, in <module>
+    add_4 = keras_layer_load(base, "add_4")
+  File "create_embeddings.py", line 20, in keras_layer_load
+    model = Model(inputs=base_model.input, outputs=base_model.get_layer(layer_name).output)
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/engine/network.py", line 358, in get_layer
+    raise ValueError('No such layer: ' + name)
+ValueError: No such layer: add_4
