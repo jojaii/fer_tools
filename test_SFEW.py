@@ -6,8 +6,8 @@ Github: https://github.com/oarriaga
 Description: Train emotion classification model
 """
 import os
-# uncomment to run on CPU
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
+# # uncomment to run on CPU
+# os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 from utils.data_manager import DSManager
 import numpy as np
@@ -40,14 +40,17 @@ def keras_test(model, data):
 np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
 ds_root = '/home/ubuntu/Desktop'
-ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF', 'SFEW']
+# ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF', 'SFEW']
+ds_names = ['FER2013', 'SFEW']
+
 m_root = "models"
 m_names = []
-fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
-m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
-           "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
-           "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
-           "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
+# m_paths = ["FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5"]
+m_paths = ['fer2013_mini_XCEPTION.110-0.65.hdf5']
+# m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
+#            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
+#            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
+#            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
 # m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
 #            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
 #            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
@@ -62,7 +65,7 @@ m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
 #            "ExpW_64_20_us_mini_XCEPTION.42-0.42.hdf5"]
 
 input_shape = (64, 64)
-split = .1
+split = .2
 type = "bw"
 accuracies = []
 ds_dict = {}
@@ -98,22 +101,11 @@ for i, ds_name in enumerate(ds_names):
     else:
         csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_"+type+".csv"
         header = "["+str(ds_name)+"]"
-        # TODO: default input for csv_file
         data_loader = DSManager(ds_name,
-                                ds_root=ds_root,
-                                image_size=input_shape[:2],
-                                csv_file=csv_name)
-        # try:
-        #     csv_file = open(os.path.join(ds_root, csv_name))
-        # except:
-        #     print(header + " File "+csv_name+" does not exist. Exiting.")
-        #     exit()
-        # else:
-        #     print(header + " File "+csv_name+" exists. Loading file...")
-        #     data_loader.load_split_CSV()
+                        ds_root=ds_root,
+                        image_size=input_shape[:2],
+                        csv_file=csv_name)
 
-        # # load train, test, val
-        # data_loader.faces = preprocess_input(data_loader.faces)
         m_path = os.path.join(m_root, m_paths[i])
         ds_dict[ds_name] = [[],
                             [],
@@ -178,7 +170,7 @@ f = open(f_name, "w")
 temp = ','.join(map(str, columns[1:]))
 f.write(temp+"\n")
 for i, line in enumerate(all_probs):
-    f.write(line+"\n")
+    f.write(str(line)+"\n")
 f.close()
 print(header+" Probs csv saved.")
 del(all_probs)

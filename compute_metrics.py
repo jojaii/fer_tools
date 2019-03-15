@@ -50,11 +50,13 @@ def plot_confusion_matrix(cm, classes,
 
 
 f_root = "bin"
-f_name = "SFEW_preds_10_bw.csv"
-f_name = os.path.join(f_root, f_name)
-ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
+f_name = "ExpW_preds_10_bw.csv"
+f_path = os.path.join(f_root, f_name)
+# ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
+ds_names = ['FER2013']
+
 for ds_name in ds_names:
-    data = pd.read_csv(f_name)
+    data = pd.read_csv(f_path)
     y_pred = [int(x) for x in data[ds_name].tolist()]
     y_actual = [int(x) for x in data["actual"].tolist()]
     y_pred = np.asarray(y_pred)
@@ -63,7 +65,7 @@ for ds_name in ds_names:
     # Compute confusion matrix
     cnf_matrix = confusion_matrix(y_actual, y_pred)
     np.set_printoptions(precision=2)
-    title = os.path.join(f_root, "SFEW_"+ds_name)
+    title = os.path.join(f_root, "ExpW_"+ds_name)
     output_title = title + ".png"
 
     plot_confusion_matrix(cnf_matrix, classes=labels, normalize=True, title=title)

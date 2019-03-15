@@ -15,8 +15,8 @@ Description: Train emotion classification model
 
 import os
 
-# uncomment to run on CPU
-os.environ['CUDA_VISIBLE_DEVICES'] = ''
+# # uncomment to run on CPU
+# os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
@@ -46,7 +46,7 @@ input_shape = (64, 64, 1)
 num_classes = 7
 ds_root = '/home/ubuntu/Datasets'
 ds_dict = {}
-split = 0.1  # TODO: should be changeable by arg
+split = 0.2  # TODO: should be changeable by arg
 
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")

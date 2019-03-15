@@ -53,10 +53,10 @@ ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
 m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
-m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
-           "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
-           "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
-           "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
+# m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
+#            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
+#            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
+#            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
 # m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
 #            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
 #            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
