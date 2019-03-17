@@ -15,12 +15,12 @@ import numpy as np
 import pandas as pd
 from utils.preprocessor import preprocess_input
 
-datasets = ['AffectNet', 'FER2013', 'KDEF', 'ExpW']
+datasets = ['AffectNet', 'FER2013', 'KDEF', 'ExpW', 'SFEW']
 input_shape = (64, 64, 1)
 num_classes = 7
 ds_root = '/home/ubuntu/Desktop'
 ds_dict = {}
-split = 0.1
+split = 0.2
 
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
@@ -72,23 +72,23 @@ for i, ds_name in enumerate(datasets):
             lindex = lindex + maximum
         # print("----"+str(lindex))
 
-    train_ints = [emotion.argmax() for emotion in train_labels]
-    class_weights = class_weight.compute_class_weight('balanced',
-                                                      np.unique(train_ints),
-                                                      train_ints)
-    labels = get_labels(ds_name)
+# #   train_ints = [emotion.argmax() for emotion in train_labels]
+  #  class_weights = class_weight.compute_class_weight('balanced',
+ #                                                     np.unique(train_ints),
+ #                                                     train_ints)
+   # labels = get_labels(ds_name)
     # print class per line
-    print("["+str(ds_name)+"] (LABEL) class weight:")
-    for i in range(num_classes):
-        temp = "["+str(ds_name)+"]  ("+str(labels[i])+") "+str(class_weights[i])
-        print(temp)
+  #  print("["+str(ds_name)+"] (LABEL) class weight:")
+  #  for i in range(num_classes):
+ #       temp = "["+str(ds_name)+"]  ("+str(labels[i])+") "+str(class_weights[i])
+ #       print(temp)
 
     # change class_weights from an array to a dictionary
-    class_weights_dict = dict(enumerate(class_weights))
+ #   class_weights_dict = dict(enumerate(class_weights))
     
-    train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
-    val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
-    test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
+ #   train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
+  #  val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
+   # test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
 
     ## DONT FORGET TO PREPROCESS
     model_loader = ModelManager(ds_name)
@@ -96,8 +96,8 @@ for i, ds_name in enumerate(datasets):
     model_loader.val_data = (val_faces, val_labels)
     model_loader.test_data = (test_faces, test_labels)
     print(header + " Training...")
-    model_loader.train_with_weights(class_weights_dict)
-    
+   # model_loader.train_with_weights(class_weights_dict)
+    model_loader.train()
     del(model_loader)
 
     # Mmanager.test()

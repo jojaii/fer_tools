@@ -14,7 +14,7 @@ class ModelManager(object):
         self.batch_size = 32
         self.num_epochs = 10000
         self.img_shape = (64, 64, 1)
-        self.split = 0.1
+        self.split = 0.2
         self.verbose = 1
         self.num_classes = 7
         self.patience = 50
@@ -43,13 +43,13 @@ class ModelManager(object):
 
         log_file_path = self.model_root+self.ds_name + "_" + \
                         str(self.img_shape[0]) + "_" + \
-                        str(int(self.split)*100)+'_us_training.log'
+                        str(int(self.split*100))+'_rw_training.log'
         csv_logger = CSVLogger(log_file_path, append=False)
         early_stop = EarlyStopping('val_loss', patience=self.patience)
         reduce_lr = ReduceLROnPlateau('val_loss', factor=0.1,
                                       patience=int(self.patience/4),
                                       verbose=1)
-        trained_models_path = self.model_root+self.ds_name+"_"+str(self.img_shape[0])+"_"+str(int(self.split*100))+'_us_mini_XCEPTION'
+        trained_models_path = self.model_root+self.ds_name+"_"+str(self.img_shape[0])+"_"+str(int(self.split*100))+'_rw_mini_XCEPTION'
         model_names = trained_models_path + '.{epoch:02d}-{val_acc:.2f}.hdf5'
         model_checkpoint = ModelCheckpoint(model_names, 'val_loss', verbose=1,
                                            save_best_only=True)
@@ -81,7 +81,7 @@ class ModelManager(object):
 
         log_file_path = self.model_root+self.ds_name + "_" + \
                         str(self.img_shape[0]) + "_" + \
-                        str(int(self.split)*100)+'bw_training.log'
+                        str(int(self.split*100))+'_bw_training.log'
         csv_logger = CSVLogger(log_file_path, append=False)
         early_stop = EarlyStopping('val_loss', patience=self.patience)
         reduce_lr = ReduceLROnPlateau('val_loss', factor=0.1,

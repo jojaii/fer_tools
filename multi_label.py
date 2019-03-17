@@ -1,4 +1,10 @@
 """
+
+notes:
+1. Copy highest accuracy models from Datasets/Models to Repos/fer_tools/models
+2. Change model directories here (m_paths)
+3. 
+
 File: train_emotion_classifier.py
 Author: Octavio Arriaga
 Email: arriaga.camargo@gmail.com
@@ -38,14 +44,14 @@ def keras_test(model, data):
 np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
 ds_root = '/home/ubuntu/Desktop'
-ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
+ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF', 'SFEW']
 m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
-m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
-           "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
-           "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
-           "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
+# m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
+#            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
+#            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
+#            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
 # m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
 #            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
 #            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
@@ -58,9 +64,14 @@ m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
 #            "FER2013_64_20_us_mini_XCEPTION.45-0.48.hdf5",
 #            "KDEF_64_20_us_mini_XCEPTION.56-0.19.hdf5",
 #            "ExpW_64_20_us_mini_XCEPTION.42-0.42.hdf5"]
+m_paths = ['AffectNet_64_20_rw_mini_XCEPTION.142-0.76.hdf5',
+           'ExpW_64_20_rw_mini_XCEPTION.117-0.69.hdf5',
+           'FER2013_64_20_rw_mini_XCEPTION.70-0.65.hdf5',
+           'KDEF_64_20_rw_mini_XCEPTION.51-0.19.hdf5',
+           'SFEW_64_20_rw_mini_XCEPTION.28-0.33.hdf5']
 
 input_shape = (64, 64)
-split = .1
+split = .2
 type = "bw"
 accuracies = []
 ds_dict = {}
