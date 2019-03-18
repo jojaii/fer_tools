@@ -711609,3 +711609,58 @@ totalMemory: 3.95GiB freeMemory: 3.36GiB
 [SFEW] Saving all probabilities to bin/SFEW_probs_20_bw.csv.
  Please wait...
 [SFEW] Preds csv saved.
+Using TensorFlow backend.
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow.py", line 58, in <module>
+    from tensorflow.python.pywrap_tensorflow_internal import *
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow_internal.py", line 28, in <module>
+    _pywrap_tensorflow_internal = swig_import_helper()
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow_internal.py", line 24, in swig_import_helper
+    _mod = imp.load_module('_pywrap_tensorflow_internal', fp, pathname, description)
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/imp.py", line 243, in load_module
+    return load_dynamic(name, filename, file)
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/imp.py", line 343, in load_dynamic
+    return _load(spec)
+ImportError: libnvidia-fatbinaryloader.so.396.44: cannot open shared object file: No such file or directory
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "multi_label.py", line 19, in <module>
+    from keras.models import load_model
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/__init__.py", line 3, in <module>
+    from . import utils
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/utils/__init__.py", line 6, in <module>
+    from . import conv_utils
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/utils/conv_utils.py", line 9, in <module>
+    from .. import backend as K
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/backend/__init__.py", line 89, in <module>
+    from .tensorflow_backend import *
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py", line 5, in <module>
+    import tensorflow as tf
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/__init__.py", line 22, in <module>
+    from tensorflow.python import pywrap_tensorflow  # pylint: disable=unused-import
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/__init__.py", line 49, in <module>
+    from tensorflow.python import pywrap_tensorflow
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow.py", line 74, in <module>
+    raise ImportError(msg)
+ImportError: Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow.py", line 58, in <module>
+    from tensorflow.python.pywrap_tensorflow_internal import *
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow_internal.py", line 28, in <module>
+    _pywrap_tensorflow_internal = swig_import_helper()
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/site-packages/tensorflow/python/pywrap_tensorflow_internal.py", line 24, in swig_import_helper
+    _mod = imp.load_module('_pywrap_tensorflow_internal', fp, pathname, description)
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/imp.py", line 243, in load_module
+    return load_dynamic(name, filename, file)
+  File "/home/ubuntu/miniconda3/envs/capstone_2/lib/python3.6/imp.py", line 343, in load_dynamic
+    return _load(spec)
+ImportError: libnvidia-fatbinaryloader.so.396.44: cannot open shared object file: No such file or directory
+
+
+Failed to load the native TensorFlow runtime.
+
+See https://www.tensorflow.org/install/install_sources#common_installation_problems
+
+for some common reasons and solutions.  Include the entire stack trace
+above this error message when asking for help.

@@ -12,6 +12,9 @@ Github: https://github.com/oarriaga
 Description: Train emotion classification model
 """
 
+# # uncomment to run on CPU
+# os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
 import os
 from utils.data_manager import DSManager
 import numpy as np
@@ -43,8 +46,8 @@ def keras_test(model, data):
 
 np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
-ds_root = '/home/ubuntu/Desktop'
-ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF', 'SFEW']
+ds_root = 'data'
+ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']#, 'SFEW']
 m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
@@ -52,10 +55,10 @@ fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
 #            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
 #            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
 #            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
-# m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
-#            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
-#            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
-#            "ExpW_64_20_bw_mini_XCEPTION.39-0.55.hdf5"]
+m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
+           "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
+           "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
+           "ExpW_64_20_bw_mini_XCEPTION.39-0.55.hdf5"]
 # m_paths = ["AffectNet_64_10_us_mini_XCEPTION.82-0.55.hdf5",
 #            "FER2013_64_10_us_mini_XCEPTION.57-0.54.hdf5",
 #            "KDEF_64_10_us_mini_XCEPTION.67-0.23.hdf5",
@@ -64,11 +67,11 @@ fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
 #            "FER2013_64_20_us_mini_XCEPTION.45-0.48.hdf5",
 #            "KDEF_64_20_us_mini_XCEPTION.56-0.19.hdf5",
 #            "ExpW_64_20_us_mini_XCEPTION.42-0.42.hdf5"]
-m_paths = ['AffectNet_64_20_rw_mini_XCEPTION.142-0.76.hdf5',
-           'ExpW_64_20_rw_mini_XCEPTION.117-0.69.hdf5',
-           'FER2013_64_20_rw_mini_XCEPTION.70-0.65.hdf5',
-           'KDEF_64_20_rw_mini_XCEPTION.51-0.19.hdf5',
-           'SFEW_64_20_rw_mini_XCEPTION.28-0.33.hdf5']
+# m_paths = ['AffectNet_64_20_rw_mini_XCEPTION.142-0.76.hdf5',
+#            'ExpW_64_20_rw_mini_XCEPTION.117-0.69.hdf5',
+#            'FER2013_64_20_rw_mini_XCEPTION.70-0.65.hdf5',
+#            'KDEF_64_20_rw_mini_XCEPTION.51-0.19.hdf5',
+#            'SFEW_64_20_rw_mini_XCEPTION.28-0.33.hdf5']
 
 input_shape = (64, 64)
 split = .2
@@ -147,7 +150,7 @@ for i, ds_name in enumerate(ds_names):
           f_name + ".\n Please wait...")
     f = open(f_name, "w")
     temp = ','.join(map(str, columns))
-    f.write(temp+"/n")
+    f.write(temp+"\n")
     for i, line in enumerate(all_labels):
         f.write(line+"\n")
     f.close()
@@ -162,7 +165,7 @@ for i, ds_name in enumerate(ds_names):
           f_name + ".\n Please wait...")
     f = open(f_name, "w")
     temp = ','.join(map(str, columns[1:]))
-    f.write(temp+"/n")
+    f.write(temp+"\n")
     for i, line in enumerate(all_probs):
         f.write(line+"\n")
     f.close()

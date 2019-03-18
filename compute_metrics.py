@@ -49,8 +49,9 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
 
 
+# TODO: these should be arguments
 f_root = "bin"
-f_name = "ExpW_preds_10_bw.csv"
+f_name = "ExpW_preds_20_rw.csv"
 f_path = os.path.join(f_root, f_name)
 # ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
 ds_names = ['FER2013']

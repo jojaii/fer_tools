@@ -1,4 +1,4 @@
 **/.ipynb_checkpoints
-bin/
 __pycache__/
 data/*
+**nohup.out
