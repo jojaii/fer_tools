@@ -1,0 +1,13 @@
+LTNet:
+1. Set up caffe by copying proto, cpp, cu, and hpp files to the right directories.
+2. Convert csv's to lmdb
+    > look for existing converters:
+        https://github.com/nashory/facial-expression-recognition-using-Caffe/tree/master/2_create_lmdb
+    > if possible, look for numpy array to lmdb, no neet to access original image (can't find any!)
+    > resort to converting back to image, name with dataset_<img_row>.jpg or png then labels
+3. Model needs to be pretrained. Is it possible to remove this variable and train from scratch? How much would this affect performance?
+4. Caffe input is BGR & RGB. Be sure to convert if inputting colored images.
+5. Can crop/input size be changed without consequences?
+6. Current code doesn't appear to be using lmdb. It might be enough to suppy file names and labels.
+7. At the end of the emotion classifier training protoxt file (resnet_train_HidGT.protoxt), there are 4 layers for 4 labelers. How to modify this to accept more input?
+8. How come there are 4 labels when there are only two datasets? (RAFDB and FER2013)
