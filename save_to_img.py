@@ -18,6 +18,7 @@ from keras.models import load_model
 import cv2
 from utils.common import get_labels
 from matplotlib.image import imsave
+import pandas as pd
 
 def keras_load(m_path):
     model = load_model(m_path)
@@ -73,7 +74,7 @@ for i, ds_name in enumerate(ds_names):
 
     ds_dict[ds_name] = [data_loader.faces,
                         {}]
-    ds_dict[ds_name][ds_name] = data_loader.emotions
+    ds_dict[ds_name][1][ds_name] = data_loader.emotions
     del(data_loader)
 
 
@@ -81,14 +82,14 @@ for i, ds_name in enumerate(ds_names):
 f_root = "bin"
 print("---- Acquiring multiple datasets")
 for i, ds_name in enumerate(ds_names):
-    header = "["+str(ds_model)+"]"
+    header = "["+str(ds_name)+"]"
     f_preds = ds_name+"_preds_"+str(int(split*100))+"_"+type+".csv"
     preds = pd.read_csv(os.path.join(f_root, f_preds))
     m_names = ds_names
     m_names.pop(ds_name)
     for j, m_pred in enumerate(m_names):
         print(header+" Loading predictions of "+str(m_pred)+" data to dict...")
-        ds_dict[1][m_pred] = [int(x) for x in preds[m_pred].tolist()]
+        ds_dict[ds_name][1][m_pred] = [int(x) for x in preds[m_pred].tolist()]
 
 num_classes = 7
 file_list = open("all_images.txt", "w")
