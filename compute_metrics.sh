@@ -1,0 +1,10 @@
+python compute_metrics.py --thresh 0 > bin/bw_0.txt
+python compute_metrics.py --thresh 0.10 > bin/bw_10.txt
+python compute_metrics.py --thresh 0.20 > bin/bw_20.txt
+python compute_metrics.py --thresh 0.30 > bin/bw_30.txt
+python compute_metrics.py --thresh 0.40 > bin/bw_40.txt
+python compute_metrics.py --thresh 0.50 > bin/bw_50.txt
+python compute_metrics.py --thresh 0.60 > bin/bw_60.txt
+python compute_metrics.py --thresh 0.70 > bin/bw_70.txt
+python compute_metrics.py --thresh 0.80 > bin/bw_80.txt
+python compute_metrics.py --thresh 0.90 > bin/bw_90.txt
