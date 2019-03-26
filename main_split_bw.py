@@ -20,12 +20,9 @@ import os
 
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
-
-# from model_manager import ModelManager
 from utils.data_manager import DSManager
 from utils.common import shuffle_in_unison, strat_sample, group, truncate, combine_classes, generate_csv, count_labels
 
-# parameters
 
 # data generator
 data_generator = ImageDataGenerator(featurewise_center=False,
@@ -41,8 +38,6 @@ datasets = ['SFEW']
 # datasets = ['AffectNet']
 # datasets = ['KDEF']#, 'ExpW']
 input_shape = (64, 64, 1)
-# model_manager = ModelManager(datasets,
-#                              input_shape)
 num_classes = 7
 ds_root = '/home/ubuntu/Datasets'
 ds_dict = {}

@@ -244,19 +244,9 @@ class DSManager(object):
     def load_split_CSV(self):
         # LOAD IMAGES AND LABELS IF CSV EXISTS
 
-        # csv_path = "/home/ubuntu/Documents/AffectNet/Manually_Annotated_file_lists/AffectNet_test.csv"
-        # csv_path = "/home/ubuntu/Documents/KDEF/KDEF.csv"
-        # csv_path = "/home/ubuntu/Documents/ExpW/label/ExpW.csv"
-        # column_names = ["emotion", "face", "group", "split_count"]
         data = pd.read_csv(os.path.join(self.ds_root,
-                                        self.csv_file))#,
-                        #    names=column_names, engine="python")
+                                        self.csv_file))
         split_values = data['split_count'][:num_classes].tolist()
-        # print(split_values[:10])
-        # print(np.shape(split_values))
-        # print(pixels[-1])
-        # print(np.shape(pixels))
-        # exit()
         pixels = data['face'].tolist()
         faces = []
         for pixel_sequence in pixels:

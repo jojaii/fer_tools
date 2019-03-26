@@ -8,6 +8,6 @@ LTNet:
 3. Model needs to be pretrained. Is it possible to remove this variable and train from scratch? How much would this affect performance?
 4. Caffe input is BGR & RGB. Be sure to convert if inputting colored images.
 5. Can crop/input size be changed without consequences?
-6. Current code doesn't appear to be using lmdb. It might be enough to suppy file names and labels.
-7. At the end of the emotion classifier training protoxt file (resnet_train_HidGT.protoxt), there are 4 layers for 4 labelers. How to modify this to accept more input?
+6. Current code doesn't appear to be using lmdb. It might be enough to supply file names and labels.
+7. At the end of the emotion classifier training protoxt file (resnet_train_HidGT.protoxt), there are 4 layers for 4 labelers. How to modify this to accept more input? (Study difference between FER prototxt files and CIFAR prototxt)
 8. How come there are 4 labels when there are only two datasets? (RAFDB and FER2013)

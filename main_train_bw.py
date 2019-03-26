@@ -72,32 +72,32 @@ for i, ds_name in enumerate(datasets):
             lindex = lindex + maximum
         # print("----"+str(lindex))
 
-# #   train_ints = [emotion.argmax() for emotion in train_labels]
-  #  class_weights = class_weight.compute_class_weight('balanced',
- #                                                     np.unique(train_ints),
- #                                                     train_ints)
-   # labels = get_labels(ds_name)
+    train_ints = [emotion.argmax() for emotion in train_labels]
+    class_weights = class_weight.compute_class_weight('balanced',
+                                                      np.unique(train_ints),
+                                                      train_ints)
+    labels = get_labels(ds_name)
     # print class per line
-  #  print("["+str(ds_name)+"] (LABEL) class weight:")
-  #  for i in range(num_classes):
- #       temp = "["+str(ds_name)+"]  ("+str(labels[i])+") "+str(class_weights[i])
- #       print(temp)
+    print("["+str(ds_name)+"] (LABEL) class weight:")
+    for i in range(num_classes):
+        temp = "["+str(ds_name)+"]  ("+str(labels[i])+") "+str(class_weights[i])
+        print(temp)
 
     # change class_weights from an array to a dictionary
- #   class_weights_dict = dict(enumerate(class_weights))
-    
- #   train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
-  #  val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
-   # test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
+    class_weights_dict = dict(enumerate(class_weights))
 
-    ## DONT FORGET TO PREPROCESS
+    train_faces, train_labels = shuffle_in_unison(train_faces, train_labels)
+    val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
+    test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
+
+    # DONT FORGET TO PREPROCESS
     model_loader = ModelManager(ds_name)
     model_loader.train_data = (train_faces, train_labels)
     model_loader.val_data = (val_faces, val_labels)
     model_loader.test_data = (test_faces, test_labels)
     print(header + " Training...")
-   # model_loader.train_with_weights(class_weights_dict)
-    model_loader.train()
+    model_loader.train_with_weights(class_weights_dict)
+    # model_loader.train()
     del(model_loader)
 
     # Mmanager.test()

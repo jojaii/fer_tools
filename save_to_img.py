@@ -17,8 +17,9 @@ from utils.preprocessor import preprocess_input
 from keras.models import load_model
 import cv2
 from utils.common import get_labels
-from matplotlib.image import imsave
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.image import imsave
 
 def keras_load(m_path):
     model = load_model(m_path)
@@ -45,6 +46,7 @@ np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
 ds_root = 'data'
 ds_names = ['AffectNet', 'ExpW', 'FER2013']#, 'KDEF']#, 'SFEW']
+# ds_names = ['FER2013']#, 'KDEF']#, 'SFEW']
 
 input_shape = (64, 64)
 split = .2
@@ -52,6 +54,9 @@ type = "bw"
 accuracies = []
 ds_dict = {}
 f_root = "bin"
+num_classes = 7
+file_list = open("all_images.txt", "w")
+labels = get_labels("FER2013")
 
 # for KDEF, we want KDEFs data and labels but not its prediction on itself
 # LOAD DATASETS INTO DICTIONARY
@@ -80,27 +85,24 @@ for i, ds_name in enumerate(ds_names):
     print("---- Acquiring multiple datasets")
     f_preds = ds_name+"_preds_"+str(int(split*100))+"_"+type+".csv"
     preds = pd.read_csv(os.path.join(f_root, f_preds))
-    m_names = ds_names
+    m_names = ds_names.copy()
     m_names.remove(ds_name)
     for j, m_pred in enumerate(m_names):
         print(header+" Loading predictions of "+str(m_pred)+" data to dict...")
         ds_dict[ds_name][1][m_pred] = [int(x) for x in preds[m_pred].tolist()]
 
-    del(data_loader)
-
-num_classes = 7
-file_list = open("all_images.txt", "w")
-for i, ds_name in enumerate(ds_names):
-    labels = get_labels("FER2013")
     folder = os.path.join("data", ds_name)
     for label in range(num_classes):
-        os.mkdirs(folder, str(label))
+        if not os.path.exists(os.path.join(folder, str(label))):
+            os.makedirs(os.path.join(folder, str(label)))
     data = ds_dict[ds_name]
+    faces = data_loader.faces
     emotions = data[1]
-    for j, image in data[0]:
+    for j, face in enumerate(faces):
         folder_2 = os.path.join(folder, str(emotions[ds_name][j]))
-        imsave(str(j)+".jpg", folder_2)
+        face = np.squeeze(face, axis=-1)
         filename = os.path.join(folder_2, str(j)+".jpg")
+        plt.imsave(filename, face, cmap="gray")
         file_list.write("%s %d %d %d\n" % (filename,
                                            emotions["AffectNet"][j],
                                            emotions["ExpW"][j],
@@ -108,5 +110,7 @@ for i, ds_name in enumerate(ds_names):
                                            #  data.emotions["KDEF"])) 
                                            # TODO: are the images from KDEF reliable enough
                                            # to be added here? check for future
+    del(data_loader)
+
 file_list.close()
 # save according to dataset name then emotion text (or emotion index?)
