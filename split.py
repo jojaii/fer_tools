@@ -24,6 +24,7 @@ input_shape = settings.INPUT_SHAPE
 num_classes = settings.NUM_CLASSES
 ds_root = settings.DATASET_ROOT
 split = settings.SPLIT
+split_str = str(int(split*100))
 undersample = settings.UNDERSAMPLE_FLAG
 # weight_type = settings.WEIGHT_TYPE
 ds_dict = {}
@@ -74,9 +75,9 @@ for i, ds_name in enumerate(datasets):
     # combine classes, remove groupings
     combined_faces, labels = combine_classes(grouped_faces)
     if undersample is True:
-        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_us.csv"
+        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+split_str+"_us.csv"
     else:
-        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+str(int(split*100))+".csv"
+        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+split_str+".csv"
     generate_csv(ds_name, csv_name, num_classes, combined_faces, labels, classes_split_labels, classes_split_counts)
 
     del(data_loader)
