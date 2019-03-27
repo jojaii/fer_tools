@@ -2,7 +2,7 @@
 
 fer tools contains scripts for dataset aggregation, model training and testing, and embedding generation of the different Facial Expression Recognition datasets.
 
-The architecture currently being used for this implementation is miniXception by oarriaga.   
+The architecture currently being used for this implementation is miniXception by github user oarriaga.   
 
 The root folder contains the scripts for:
 1. Splitting datasets
