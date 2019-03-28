@@ -1,17 +1,3 @@
-"""
-
-notes:
-1. Copy highest accuracy models from Datasets/Models to Repos/fer_tools/models
-2. Change model directories here (m_paths)
-3. 
-
-File: train_emotion_classifier.py
-Author: Octavio Arriaga
-Email: arriaga.camargo@gmail.com
-Github: https://github.com/oarriaga
-Description: Train emotion classification model
-"""
-
 # # uncomment to run on CPU
 # os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
