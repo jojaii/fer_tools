@@ -81,11 +81,6 @@ for i, ds_name in enumerate(datasets):
     generate_csv(ds_name, csv_name, num_classes, combined_faces, labels, classes_split_labels, classes_split_counts)
 
     del(data_loader)
-    del(shuf_faces)
-    del(shuf_emotions)
-    del(labels_count)
-    del(grouped_faces)
-    del(minimum)
     del(classes_split_labels)
     del(classes_split_counts)
     del(combined_faces)

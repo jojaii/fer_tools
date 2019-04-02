@@ -30,10 +30,10 @@ def keras_test(model, data):
     return preds, probs
 
 
-np.set_printoptions(threshold=np.nan)
+# np.set_printoptions(threshold=np.nan)
 np.set_printoptions(linewidth=np.inf)
 ds_root = 'data'
-ds_names = ['AffectNet', 'ExpW', 'FER2013', "All"]#, 'KDEF']#, 'SFEW']
+ds_names = ['AffectNet', 'ExpW', 'FER2013', "All"]  # , 'KDEF']#, 'SFEW']
 m_root = "models"
 m_names = []
 fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
@@ -41,9 +41,7 @@ fer_path = "/home/ubuntu/Repos/face_classification/trained_models/undersampled"
 #            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
 #            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
 #            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
-m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
-           "ExpW_64_20_bw_mini_XCEPTION.39-0.55.hdf5",
-           "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5"]
+m_paths = ["All_64_20_rw_mini_XCEPTION.201-0.73.hdf5"]
         #    "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
            # All hdf5
 # m_paths = ["AffectNet_64_10_us_mini_XCEPTION.82-0.55.hdf5",
@@ -62,7 +60,7 @@ m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
 
 input_shape = (64, 64)
 split = .2
-type = "bw"
+type = "rw"
 accuracies = []
 ds_dict = {}
 
@@ -71,7 +69,7 @@ print("Loading datasets...")
 for i, ds_name in enumerate(ds_names):
     if ds_name != "All":
         # load/create csv
-        csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_"+type+".csv"
+        csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_bw.csv"
         header = "["+str(ds_name)+"]"
         # TODO: default input for csv_file
         data_loader = DSManager(ds_name,
@@ -88,58 +86,59 @@ for i, ds_name in enumerate(ds_names):
             data_loader.load_split_CSV()
 
         # load train, test, val
-        m_path = os.path.join(m_root, m_paths[i])
+        # m_path = os.path.join(m_root, m_paths[i])
         data_loader.faces = preprocess_input(data_loader.faces)
         ds_dict[ds_name] = [data_loader.faces,
                             data_loader.emotions,
-                            keras_load(m_path),
+                            # keras_load(m_path),
+                            [],
                             {}]
 
         del(data_loader)
     else:
         # load train, test, val
-        m_path = os.path.join(m_root, m_paths[i])
-        ds_dict[ds_name] = [[]],
-                            []],
+        m_path = os.path.join(m_root, m_paths[0])
+        ds_dict[ds_name] = [[],
+                            [],
                             keras_load(m_path),
                             {}]
 
 
 print("---- Multi-labelling datasets")
-for i, ds_model in enumerate(ds_names):
-    header = "["+str(ds_model)+"]"
-    for j, ds_data in enumerate(ds_names[:len(ds_names)-1]):
-        print(header+" Creating predictions for "+str(ds_data)+" data...")
-        test_data = (ds_dict[ds_data][0], ds_dict[ds_data][1])
-        preds, probs = keras_test(ds_dict[ds_model][2],
-                                  test_data)
-        # save labels to ds_name2 since it is the source of the data
-        ds_dict[ds_data][3][ds_model] = (preds, probs)
+# for i, ds_model in enumerate(ds_names):
+ds_model = "All"
+header = "["+str(ds_model)+"]"
+for j, ds_data in enumerate(ds_names[:len(ds_names)-1]):
+    print(header+" Creating predictions for "+str(ds_data)+" data...")
+    test_data = (ds_dict[ds_data][0], ds_dict[ds_data][1])
+    preds, probs = keras_test(ds_dict[ds_model][2],
+                                test_data)
+    # save labels to ds_name2 since it is the source of the data
+    ds_dict[ds_data][3][ds_model] = (preds, probs)
 
 
 print("---- Saving all labels to csvs")
-for i, ds_name in enumerate(ds_names[:len(ds_names-1)]):
+for i, ds_name in enumerate(ds_names[:len(ds_names)-1]):
     header = "["+str(ds_name)+"]"
     print(header+" Saving actual labels and "+ds_name+" predictions...")
-    all_labels = ds_dict[ds_name][1]
-    all_probs = []
-    columns = ["actual", "prediction"]
+    # all_labels = ds_dict[ds_name][1]
+    # all_probs = []
+    columns = []#["actual" "prediction"]
     # add predictions for current folder first
-    preds = ds_dict[ds_name][3][ds_name][0]
-    probs = ds_dict[ds_name][3][ds_name][1]
-    all_labels = [str(k)+","+str(preds[iter]) for iter, k in enumerate(all_labels)]
-    all_probs.extend(probs)
-    for j, ds_name2 in enumerate(ds_names):
-        if i != j:
-            print(header+" Saving "+ds_name2+" predictions...")
-            columns.append(ds_name2)
-            preds = ds_dict[ds_name][3][ds_name2][0]
-            probs = ds_dict[ds_name][3][ds_name2][1]
-            all_labels = [str(k)+","+str(preds[iter]) for iter, k in enumerate(all_labels)]
-            all_probs = [str(k)+","+str(probs[iter]) for iter, k in enumerate(all_probs)]
+    # preds = ds_dict[ds_name][3][ds_name][0]
+    # probs = ds_dict[ds_name][3][ds_name][1]
+    # all_labels = [str(k)+","+str(preds[iter]) for iter, k in enumerate(all_labels)]
+    # all_probs.extend(probs)
+    ds_name2 = "All"
+    print(header+" Saving "+ds_name2+" predictions...")
+    columns.append(ds_name2)
+    preds = ds_dict[ds_name][3][ds_name2][0]
+    probs = ds_dict[ds_name][3][ds_name2][1]
+    all_labels = [str(k) for k in preds]
+    all_probs = [str(k) for k in probs]
 
     # open multi-labelled csv
-    f_name = "bin/"+ds_name+"_preds_"+str(int(split*100))+"_"+type+".csv"
+    f_name = "bin/"+ds_name+"_preds_"+str(int(split*100))+"_All.csv"
 
     print(header+" Saving all predictions to " +
           f_name + ".\n Please wait...")
@@ -154,7 +153,7 @@ for i, ds_name in enumerate(ds_names[:len(ds_names-1)]):
     # close multi-labelled csv
 
     # open probs csv
-    f_name = "bin/"+ds_name+"_probs_"+str(int(split*100))+"_"+type+".csv"
+    f_name = "bin/"+ds_name+"_probs_"+str(int(split*100))+"_All.csv"
 
     print(header+" Saving all probabilities to " +
           f_name + ".\n Please wait...")
