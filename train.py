@@ -17,6 +17,7 @@ split = settings.SPLIT
 split_str = str(int(split*100))
 undersample = settings.UNDERSAMPLE_FLAG
 weight_type = settings.WEIGHT_TYPE
+train_on_all = settings.TRAIN_ON_ALL
 ds_dict = {}
 class_weights_dict=[]
 
@@ -69,6 +70,19 @@ for i, ds_name in enumerate(datasets):
     val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
     test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
 
+    if train_on_all is True:
+    # compile all data into a single group for training and validation
+        if all_train_faces == []:
+            all_train_faces = train_faces
+            all_train_labels = train_labels
+            all_val_faces = val_faces
+            all_val_labels = val_labels
+        else:
+            all_train_faces = np.vstack((all_train_faces, train_faces))
+            all_train_labels = np.vstack((all_train_labels, train_labels))
+            all_val_faces = np.vstack((all_val_faces, val_faces))
+            all_val_labels = np.vstack((all_val_labels, val_labels))
+    
     # DONT FORGET TO PREPROCESS
     model_loader = ModelManager(ds_name)
     model_loader.train_data = (train_faces, train_labels)
@@ -99,3 +113,10 @@ for i, ds_name in enumerate(datasets):
     del(val_labels)
     del(test_faces)
     del(test_labels)
+
+if train_on_all is True:
+    model_loader = ModelManager("All")
+    model_loader.train_data = (all_train_faces, all_train_labels)
+    model_loader.val_data = (all_val_faces, all_val_labels)
+    print( "[All] Training...")
+    model_loader.train(weight_type=weight_type, class_weights=class_weights_dict)        

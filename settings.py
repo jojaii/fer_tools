@@ -8,3 +8,4 @@ DATASET_ROOT = '/home/ubuntu/Datasets'
 SPLIT = 0.2
 UNDERSAMPLE_FLAG = False
 WEIGHT_TYPE = "rw"  # bw (balanced weight or randomized)
+TRAIN_ON_ALL = False

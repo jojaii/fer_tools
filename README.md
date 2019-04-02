@@ -12,7 +12,7 @@ The root folder contains the scripts for:
 2. Training miniXception models (train.py)
 3. Inferencing using the trained models ()
 
-Variables can be changed in the (settings.cfg) file.
+Variables can be changed in the (settings.py) file.
 
 Other directory contents:
 (models) Trained models 

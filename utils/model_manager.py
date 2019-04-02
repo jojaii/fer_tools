@@ -26,7 +26,7 @@ class ModelManager(object):
         self.model.compile(optimizer='adam', loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
-    def train(self, weight_type, class_weights_dict=[]):#, train_data, val_data, model, patience):
+    def train(self, weight_type, class_weights=[]):#, train_data, val_data, model, patience):
         # need variables declared in previous cell
         # consider overriding modelcheckpoint functions to return last successfully saved model
         # pass dataset name
@@ -63,7 +63,7 @@ class ModelManager(object):
                                 steps_per_epoch=len(faces)/self.batch_size,
                                 epochs=self.num_epochs, verbose=1,
                                 callbacks=callbacks, validation_data=self.val_data,
-                                class_weight=class_weights_dict)
+                                class_weight=class_weights)
         else:
             self.model.fit_generator(data_generator.flow(
                                 faces, emotions, self.batch_size),

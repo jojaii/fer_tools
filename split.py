@@ -63,7 +63,7 @@ for i, ds_name in enumerate(datasets):
     grouped_faces = group(shuf_faces, shuf_emotions, num_classes)
 
     # UNDERSAMPLE if turned on
-    if undersample is True:
+    if undersample:
         labels_count = count_labels(shuf_emotions)
         minimum = min(labels_count)
         grouped_faces = truncate(grouped_faces, minimum)
