@@ -1,0 +1,45 @@
+Action points
+
+CHANGES:
+> use_global_stats - all are set to true
+from batch norm layer documentation:
+  // If false, normalization is performed over the current mini-batch
+  // and global statistics are accumulated (but not yet used) by a moving
+  // average.
+  // If true, those accumulated mean and variance values are used for the
+  // normalization.
+  // By default, it is set to false when the network is in the training
+  // phase and true when the network is in the testing phase.
+
+REMOVED LAYERS:
+layer {
+  name: "hidden_gt"
+  type: "Softmax"
+  bottom: "fc_emotion_7"
+  top: "hidden_gt"
+}
+
+ADDED LAYERS:
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc_emotion_7"
+  bottom: "label"
+  top: "loss"
+}
+
+layer {
+  name: "output"
+  type: "Softmax"
+  bottom: "fc_emotion_7"
+  top: "output"
+}
+
+BASIS:
+LTNet/training sript/cifar10_LTNet_train.prototxt
+LTNet/evaluation script/res20_cifar10_deploy_org.prototxt
+
+USEFUL NOTES:
+1. For visualizing graph, refer to the following tutorial:
+http://glidingphenomena.blogspot.com/2016/12/caffe-visualizing-caffe-network.html
+^ the above uses one of caffe's default functions (draw_net file found in caffe directory)
