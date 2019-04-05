@@ -1,19 +1,30 @@
-#==== data and labels from 4 lablers===#
-layer {
-  name: "data"
-  type: "MultilabelImageData"
-  top: "data"
-  top: "label"
-  transform_param {
-    mirror: true
-    crop_size: 64
+name: "res80_fer"
+
+layer{
+  name:"data"
+  type:"Input"
+  top:"data"
+  input_param{
+    shape{
+       dim:1
+       dim:1
+       dim:64    
+       dim:64
+    }
   }
-  multilabel_image_data_param {
-    shuffle:true
-    source: "all_images.txt"
-    batch_size: 64
-    root_folder: "/home/ubuntu/Repos/fer_tools/"
-    label_num: 4
+}
+
+layer{
+  name:"data"
+  type:"Input"
+  top:"label"
+  input_param{
+    shape{
+       dim:1
+       dim:1
+       dim:1
+       dim:1
+    }
   }
 }
 ##==========main body of the net ========#
@@ -24,7 +35,7 @@ layer {
   bottom: "data"
   top: "data"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -71,7 +82,7 @@ layer {
   bottom: "pool"
   top: "pool"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -114,7 +125,7 @@ layer {
   bottom: "Convolution1"
   top: "Convolution1"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -154,7 +165,7 @@ layer {
   bottom: "Convolution2"
   top: "Convolution2"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -210,7 +221,7 @@ layer {
   bottom: "Convolution4"
   top: "Convolution4"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -238,7 +249,7 @@ layer {
   bottom: "Eltwise1"
   top: "Eltwise1"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -278,7 +289,7 @@ layer {
   bottom: "Convolution5"
   top: "Convolution5"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -318,7 +329,7 @@ layer {
   bottom: "Convolution6"
   top: "Convolution6"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -368,7 +379,7 @@ layer {
   bottom: "Eltwise2"
   top: "Eltwise2"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -408,7 +419,7 @@ layer {
   bottom: "Convolution8"
   top: "Convolution8"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -448,7 +459,7 @@ layer {
   bottom: "Convolution9"
   top: "Convolution9"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -498,7 +509,7 @@ layer {
   bottom: "A_RNS"
   top: "A_RNS"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -538,7 +549,7 @@ layer {
   bottom: "Convolution11"
   top: "Convolution11"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -578,7 +589,7 @@ layer {
   bottom: "Convolution12"
   top: "Convolution12"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -634,7 +645,7 @@ layer {
   bottom: "Convolution14"
   top: "Convolution14"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -662,7 +673,7 @@ layer {
   bottom: "Eltwise3"
   top: "Eltwise3"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -702,7 +713,7 @@ layer {
   bottom: "Convolution15"
   top: "Convolution15"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -742,7 +753,7 @@ layer {
   bottom: "Convolution16"
   top: "Convolution16"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -792,7 +803,7 @@ layer {
   bottom: "Eltwise4"
   top: "Eltwise4"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -832,7 +843,7 @@ layer {
   bottom: "Convolution18"
   top: "Convolution18"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -872,7 +883,7 @@ layer {
   bottom: "Convolution19"
   top: "Convolution19"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -922,7 +933,7 @@ layer {
   bottom: "Eltwise5"
   top: "Eltwise5"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -962,7 +973,7 @@ layer {
   bottom: "Convolution21"
   top: "Convolution21"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1002,7 +1013,7 @@ layer {
   bottom: "Convolution22"
   top: "Convolution22"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1052,7 +1063,7 @@ layer {
   bottom: "B_RNS"
   top: "B_RNS"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1092,7 +1103,7 @@ layer {
   bottom: "Convolution24"
   top: "Convolution24"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1132,7 +1143,7 @@ layer {
   bottom: "Convolution25"
   top: "Convolution25"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1188,7 +1199,7 @@ layer {
   bottom: "Convolution27"
   top: "Convolution27"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1216,7 +1227,7 @@ layer {
   bottom: "Eltwise6"
   top: "Eltwise6"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1256,7 +1267,7 @@ layer {
   bottom: "Convolution28"
   top: "Convolution28"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1296,7 +1307,7 @@ layer {
   bottom: "Convolution29"
   top: "Convolution29"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1346,7 +1357,7 @@ layer {
   bottom: "Eltwise7"
   top: "Eltwise7"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1386,7 +1397,7 @@ layer {
   bottom: "Convolution31"
   top: "Convolution31"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1426,7 +1437,7 @@ layer {
   bottom: "Convolution32"
   top: "Convolution32"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1476,7 +1487,7 @@ layer {
   bottom: "Eltwise8"
   top: "Eltwise8"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1516,7 +1527,7 @@ layer {
   bottom: "Convolution34"
   top: "Convolution34"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1556,7 +1567,7 @@ layer {
   bottom: "Convolution35"
   top: "Convolution35"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1606,7 +1617,7 @@ layer {
   bottom: "Eltwise9"
   top: "Eltwise9"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1646,7 +1657,7 @@ layer {
   bottom: "Convolution37"
   top: "Convolution37"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1686,7 +1697,7 @@ layer {
   bottom: "Convolution38"
   top: "Convolution38"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1736,7 +1747,7 @@ layer {
   bottom: "Eltwise10"
   top: "Eltwise10"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1776,7 +1787,7 @@ layer {
   bottom: "Convolution40"
   top: "Convolution40"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1816,7 +1827,7 @@ layer {
   bottom: "Convolution41"
   top: "Convolution41"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1866,7 +1877,7 @@ layer {
   bottom: "Eltwise11"
   top: "Eltwise11"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1906,7 +1917,7 @@ layer {
   bottom: "Convolution43"
   top: "Convolution43"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1946,7 +1957,7 @@ layer {
   bottom: "Convolution44"
   top: "Convolution44"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -1996,7 +2007,7 @@ layer {
   bottom: "Eltwise12"
   top: "Eltwise12"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2036,7 +2047,7 @@ layer {
   bottom: "Convolution46"
   top: "Convolution46"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2076,7 +2087,7 @@ layer {
   bottom: "Convolution47"
   top: "Convolution47"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2126,7 +2137,7 @@ layer {
   bottom: "Eltwise13"
   top: "Eltwise13"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2166,7 +2177,7 @@ layer {
   bottom: "Convolution49"
   top: "Convolution49"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2206,7 +2217,7 @@ layer {
   bottom: "Convolution50"
   top: "Convolution50"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2256,7 +2267,7 @@ layer {
   bottom: "Eltwise14"
   top: "Eltwise14"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2296,7 +2307,7 @@ layer {
   bottom: "Convolution52"
   top: "Convolution52"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2336,7 +2347,7 @@ layer {
   bottom: "Convolution53"
   top: "Convolution53"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2386,7 +2397,7 @@ layer {
   bottom: "Eltwise15"
   top: "Eltwise15"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2426,7 +2437,7 @@ layer {
   bottom: "Convolution55"
   top: "Convolution55"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2466,7 +2477,7 @@ layer {
   bottom: "Convolution56"
   top: "Convolution56"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2516,7 +2527,7 @@ layer {
   bottom: "Eltwise16"
   top: "Eltwise16"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2556,7 +2567,7 @@ layer {
   bottom: "Convolution58"
   top: "Convolution58"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2596,7 +2607,7 @@ layer {
   bottom: "Convolution59"
   top: "Convolution59"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2646,7 +2657,7 @@ layer {
   bottom: "Eltwise17"
   top: "Eltwise17"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2686,7 +2697,7 @@ layer {
   bottom: "Convolution61"
   top: "Convolution61"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2726,7 +2737,7 @@ layer {
   bottom: "Convolution62"
   top: "Convolution62"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2776,7 +2787,7 @@ layer {
   bottom: "Eltwise18"
   top: "Eltwise18"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2816,7 +2827,7 @@ layer {
   bottom: "Convolution64"
   top: "Convolution64"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2856,7 +2867,7 @@ layer {
   bottom: "Convolution65"
   top: "Convolution65"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2906,7 +2917,7 @@ layer {
   bottom: "Eltwise19"
   top: "Eltwise19"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2946,7 +2957,7 @@ layer {
   bottom: "Convolution67"
   top: "Convolution67"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -2986,7 +2997,7 @@ layer {
   bottom: "Convolution68"
   top: "Convolution68"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3036,7 +3047,7 @@ layer {
   bottom: "Eltwise20"
   top: "Eltwise20"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3076,7 +3087,7 @@ layer {
   bottom: "Convolution70"
   top: "Convolution70"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3116,7 +3127,7 @@ layer {
   bottom: "Convolution71"
   top: "Convolution71"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3166,7 +3177,7 @@ layer {
   bottom: "C_RNS"
   top: "C_RNS"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3206,7 +3217,7 @@ layer {
   bottom: "Convolution73"
   top: "Convolution73"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3246,7 +3257,7 @@ layer {
   bottom: "Convolution74"
   top: "Convolution74"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3302,7 +3313,7 @@ layer {
   bottom: "Convolution76"
   top: "Convolution76"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3330,7 +3341,7 @@ layer {
   bottom: "Eltwise21"
   top: "Eltwise21"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3370,7 +3381,7 @@ layer {
   bottom: "Convolution77"
   top: "Convolution77"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3410,7 +3421,7 @@ layer {
   bottom: "Convolution78"
   top: "Convolution78"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3460,7 +3471,7 @@ layer {
   bottom: "Eltwise22"
   top: "Eltwise22"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3500,7 +3511,7 @@ layer {
   bottom: "Convolution80"
   top: "Convolution80"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3540,7 +3551,7 @@ layer {
   bottom: "Convolution81"
   top: "Convolution81"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3602,7 +3613,7 @@ layer {
   bottom: "D_pool"
   top: "D_pool"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3642,7 +3653,7 @@ layer {
   bottom: "InnerProduct1"
   top: "InnerProduct1"
   batch_norm_param {
-    use_global_stats: false
+    use_global_stats: true
   }
 }
 layer {
@@ -3679,187 +3690,20 @@ layer {
   }
 }
 
+##+++++++++++++++++++++++++++++++++
+
 layer {
-  name: "hidden_gt"
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc_emotion_7"
+  bottom: "label"
+  top: "loss"
+}
+
+layer {
+  name: "output"
   type: "Softmax"
   bottom: "fc_emotion_7"
-  top: "hidden_gt"
+  top: "output"
 }
-
-#layer {
-#  name: "drop_emotion"
-#  type: "Dropout"
-#  bottom: "fc_emotion_7"
-#  top: "fc_emotion_7"
-#  dropout_param {
-#    dropout_ratio: 0.5
-#  }
-#}
-
-##======split label to 4 labler====
-layer {
-  name: "splitlabel"
-  type: "Slice"
-  bottom: "label"
-  top: "label1"
-  top: "label2"
-  top: "label3"
-  top: "label4"
-  slice_param {
-    axis: 1
-    slice_point: 1
-    slice_point: 2
-    slice_point: 3
-  }
-}
-
-##==========labeler 1========
-
-layer {
-  name: "observe_aff"
-  type: "InnerProductAsProb"
-  bottom: "hidden_gt"
-  top: "observe_aff"
-  param{lr_mult: 1}
-  inner_product_as_prob_param {
-    num_output: 7
-    weight_filler {
-      type: "xavier"
-    }
-    minvalue: 0.00001
-  }
-}
-
-layer {
-  name: "loss1"
-  type: "SoftmaxWithLoss"
-  bottom: "observe_aff"
-  bottom: "label1"
-  top: "loss1"
-  loss_weight:3
-  loss_param{ignore_label:-1}
-}
-
-layer {
-   name: "acc1"
-   type: "Accuracy"
-   bottom: "observe_aff"
-   bottom: "label1"
-   top: "acc1"
-   accuracy_param{ignore_label:-1}
- }
-
-##==========labeler 2========
-
-layer {
-  name: "observe_Maff"
-  type: "InnerProductAsProb"
-  bottom: "hidden_gt"
-  top: "observe_Maff"
-  param{lr_mult: 1}
-  inner_product_as_prob_param {
-    num_output: 7
-    weight_filler {
-      type: "xavier"
-    }
-    minvalue: 0.00001
-  }
-}
-
-layer {
-  name: "loss2"
-  type: "SoftmaxWithLoss"
-  bottom: "observe_Maff"
-  bottom: "label2"
-  top: "loss2"
-  loss_weight:0.5
-  loss_param{ignore_label:-1}
-}
-
-layer {
-   name: "acc2"
-   type: "Accuracy"
-   bottom: "observe_Maff"
-   bottom: "label2"
-   top: "acc2"
-   accuracy_param{ignore_label:-1}
-}
-
-
-##==========labeler 3========
-
-layer {
-  name: "observe_Mraf"
-  type: "InnerProductAsProb"
-  bottom: "hidden_gt"
-  top: "observe_Mraf"
-  param{lr_mult: 1}
-  inner_product_as_prob_param {
-    num_output: 7
-    weight_filler {
-      type: "xavier"
-    }
-    minvalue: 0.00001
-  }
-}
-
-layer {
-  name: "loss3"
-  type: "SoftmaxWithLoss"
-  bottom: "observe_Mraf"
-  bottom: "label3"
-  top: "loss3"
-  loss_weight:0.1
-  loss_param{ignore_label:-1}
-}
-
-layer {
-   name: "acc3"
-   type: "Accuracy"
-   bottom: "observe_Mraf"
-   bottom: "label3"
-   top: "acc3"
-   accuracy_param{ignore_label:-1}
-}
-
-##============labeler 4========
-
-layer {
-  name: "observe_raf"
-  type: "InnerProductAsProb"
-  bottom: "hidden_gt"
-  top: "observe_raf"
-  param{lr_mult: 1}
-  inner_product_as_prob_param {
-    num_output: 7
-    weight_filler {
-      type: "xavier"
-    }
-    minvalue: 0.00001
-  }
-}
-
-layer {
-  name: "loss4"
-  type: "SoftmaxWithLoss"
-  bottom: "observe_raf"
-  bottom: "label4"
-  top: "loss4"
-  loss_weight: 3
-  loss_param{ignore_label:-1}
-}
-
-layer {
-   name: "acc4"
-   type: "Accuracy"
-   bottom: "observe_raf"
-   bottom: "label4"
-   top: "acc4"
-   accuracy_param{ignore_label:-1}
-}
-
-
-
-
-
 

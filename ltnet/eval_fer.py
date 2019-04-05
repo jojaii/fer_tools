@@ -10,7 +10,7 @@ import pdb
 import argparse
 import sys
 from shutil import copyfile
-import pandas as
+import pandas as pd
 
 caffe_root = '/home/ubuntu/caffe/' ### Change your caffe_root here
 sys.path.insert(0, caffe_root + 'python')

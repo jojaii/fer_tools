@@ -1,4 +1,4 @@
-train_net:"resnet_train_HidGT.prototxt"
+train_net:"res80_fer_train.prototxt"
 #test_net: "resnet_test.prototxt"
 #test_state:{stage: "TEST CK"}
 #test_iter: 50
@@ -19,7 +19,7 @@ iter_size:4
 weight_decay: 0.0005
 average_loss:50
 snapshot: 5000
-snapshot_prefix: "snapshot/train_HidGT_noU"
+snapshot_prefix: "snapshot/train_fer"
 #train_logging_loss: true
 #test_logging_loss: true
 #train_logging_dataflow: false

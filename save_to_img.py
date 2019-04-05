@@ -112,8 +112,8 @@ for i, ds_name in enumerate(ds_names):
         plt.imsave(filename, face, cmap="gray")
         file_list.write("%s %d %d %d %d\n" % (filename,
                                               emotions["AffectNet"][j],
-                                              emotions["FER2013"][j],
                                               emotions["ExpW"][j],
+                                              emotions["FER2013"][j],
                                               emotions["All"][j]))
                                            #  data.emotions["KDEF"]))
                                            # TODO: are the images from KDEF reliable enough

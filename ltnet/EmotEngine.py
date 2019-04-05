@@ -29,7 +29,8 @@ class EmotEngine():
                  input_data_str='data',
                  output_str='output',
                  norm_flag=0,
-                 src_size=(256, 256)):
+                 src_size=(256, 256),
+                 is_colored=True):
 
         self.model_def = model_def
         self.model_weights = model_weights
@@ -50,17 +51,20 @@ class EmotEngine():
         self.batchsize = tmplist[0]
         tmplist[0] = 1
         self.imgshape = tuple(tmplist)
+        self.is_colored = is_colored
 
         # create transformer fot e input called 'data'
         self.transformer = caffe.io.Transformer({self.input_data_str: self.net.blobs[self.input_data_str].data.shape})
         self.transformer.set_transpose(self.input_data_str, (2, 0, 1)) # move image channels to outermost dimension
         self.transformer.set_raw_scale(self.input_data_str, 255)     # rescale from [0,1] to [0,255]
-        if norm_flag == 1:
-            self.transformer.set_input_scale(self.input_data_str, 0.00392156862745)
-         elif norm_flag == 2:
-            self.transformer.set_input_scale(self.input_data_str, 0.0078125)
-            self.transformer.set_mean(self.input_data_str, np.array([128,128,128]))
-        self.transformer.set_channel_swap(self.input_data_str,[2,1,0]) # swap channels from RGB to BGR
+
+        if self.is_colored is True:
+            if norm_flag == 1:
+                self.transformer.set_input_scale(self.input_data_str, 0.00392156862745)
+            elif norm_flag == 2:
+                self.transformer.set_input_scale(self.input_data_str, 0.0078125)
+                self.transformer.set_mean(self.input_data_str, np.array([128,128,128]))
+            self.transformer.set_channel_swap(self.input_data_str,[2,1,0]) # swap channels from RGB to BGR
 
     def reshape_feature(self, feat):
         feat_shape = feat.shape
@@ -88,17 +92,42 @@ class EmotEngine():
     idx = 4: happy
     idx = 5: sadness
     idx = 6: suprise
-    '''
-    def get_emoti_from_img(self, imgpath):
-        image = caffe.io.load_image(imgpath)
+    # '''
+    # def get_emoti_from_images(self, images):
+    #     # image = caffe.io.load_image(imgpath)
+    #     image = caffe.io.resize_image(image, self.src_size)
+    #     image = self.crop_center(image)
+    #     transformed_img = self.transformer.preprocess(self.input_data_str, image)
+    #     self.net.blobs[self.input_data_str].data[0] = transformed_img
+    #     self.net.forward()
+    #     prob = self.net.blobs[self.output_str].data
+    #     prob = self.reshape_feature(prob)
+    #     return prob
+
+    def get_emoti_from_img(self, image):
+        # image = np.squeeze(image, axis=-1)
+        # image = np.stack((image,)*3, axis=-1)
         image = caffe.io.resize_image(image, self.src_size)
         image = self.crop_center(image)
-        transformed_img = self.transformer.preprocess(self.input_data_str, image)
+        transformed_img = self.transformer.preprocess(self.input_data_str,
+                                                      image)
         self.net.blobs[self.input_data_str].data[0] = transformed_img
         self.net.forward()
         prob = self.net.blobs[self.output_str].data
         prob = self.reshape_feature(prob)
-        return prob
+        pred = np.argmax(prob)
+        return pred
+
+    # def get_emoti_from_img(self, imgpath):
+    #     image = caffe.io.load_image(imgpath)
+    #     image = caffe.io.resize_image(image, self.src_size)
+    #     image = self.crop_center(image)
+    #     transformed_img = self.transformer.preprocess(self.input_data_str, image)
+    #     self.net.blobs[self.input_data_str].data[0] = transformed_img
+    #     self.net.forward()
+    #     prob = self.net.blobs[self.output_str].data
+    #     prob = self.reshape_feature(prob)
+    #     return prob
 
     def get_emoti_and_loss_from_img(self, imgpath, gtlbl):
         image = caffe.io.load_image(imgpath)
@@ -127,21 +156,17 @@ class EmotEngine():
         prob = self.reshape_feature(prob)
         return prob
 
-    def get_emoti_and_loss_from_batch(self, imgpaths, gtlbls,output_str = 'output', nclass = 7):
-        batchsize = self.batchsize
-        if len(imgpaths) == 0:
-            return [],[]
-        for i in range(batchsize):
-            if i >= len(imgpaths):
-                # can this load from numpy image?
-                # or should entry always be a directory
-                image = caffe.io.load_image(imgpaths[-1])
-                # simply returns image with type np.float32 with size HxWx1
-                self.net.blobs["label"].data[i] = gtlbls[-1]
-            else:
-                image = caffe.io.load_image(imgpaths[i])
-                self.net.blobs["label"].data[i] = gtlbls[i]
+    def get_emoti_and_loss_from_batch(self, face_list, label_list,
+                                      output_str='output', nclass=7):
+
+        num_images = len(face_list)
+        for i in range(num_images):
+            image = face_list[i]
+            # broadcast grayscale image to 3 channels
+            image = np.squeeze(image, axis=-1)
+            image = np.stack((image,)*3, axis=-1)
             image = caffe.io.resize_image(image, self.src_size)
+            self.net.blobs["label"].data[i] = label_list[i]
             image = self.crop_center(image)
             transformed_img = self.transformer.preprocess(self.input_data_str, image)
             self.net.blobs[self.input_data_str].data[i] = transformed_img
@@ -149,14 +174,46 @@ class EmotEngine():
         prob = self.net.blobs[output_str].data
         prob = self.reshape_feature(prob)
         is_predict_correct = []
-        for i in range(len(imgpaths)):
+        for i in range(num_images):
             is_predict_correct.append(0)
             bidx = i*nclass
             eidx = (i+1)*nclass
-            is_predict_correct[i] = 1 if prob[i*nclass+gtlbls[i]]==max(prob[bidx:eidx]) else 0
+            is_predict_correct[i] = 1 if prob[bidx+label_list[i]] == max(prob[bidx:eidx]) else 0
         loss = self.net.blobs["loss"].data
         loss = self.reshape_feature(loss)
+
         return is_predict_correct, loss[0]
+
+    # def get_emoti_and_loss_from_batch(self, imgpaths, gtlbls,output_str = 'output', nclass = 7):
+    #     batchsize = self.batchsize
+    #     if len(imgpaths) == 0:
+    #         return [],[]
+    #     for i in range(batchsize):
+    #         if i >= len(imgpaths):
+    #             # can this load from numpy image?
+    #             # or should entry always be a directory
+    #             image = caffe.io.load_image(imgpaths[-1])
+    #             # simply returns image with type np.float32 with size HxWx1
+    #             self.net.blobs["label"].data[i] = gtlbls[-1]
+    #         else:
+    #             image = caffe.io.load_image(imgpaths[i])
+    #             self.net.blobs["label"].data[i] = gtlbls[i]
+    #         image = caffe.io.resize_image(image, self.src_size)
+    #         image = self.crop_center(image)
+    #         transformed_img = self.transformer.preprocess(self.input_data_str, image)
+    #         self.net.blobs[self.input_data_str].data[i] = transformed_img
+    #     self.net.forward()
+    #     prob = self.net.blobs[output_str].data
+    #     prob = self.reshape_feature(prob)
+    #     is_predict_correct = []
+    #     for i in range(len(imgpaths)):
+    #         is_predict_correct.append(0)
+    #         bidx = i*nclass
+    #         eidx = (i+1)*nclass
+    #         is_predict_correct[i] = 1 if prob[i*nclass+gtlbls[i]]==max(prob[bidx:eidx]) else 0
+    #     loss = self.net.blobs["loss"].data
+    #     loss = self.reshape_feature(loss)
+    #     return is_predict_correct, loss[0]
 
 
 def parse_img_list_item(line):
