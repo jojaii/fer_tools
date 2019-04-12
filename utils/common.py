@@ -1,9 +1,12 @@
 import numpy as np
+import settings
+from sklearn.utils import class_weight
 # TODO: define fxn inputs and outputs
 
 # import settings
 
-num_classes = 7
+num_classes = settings.NUM_CLASSES
+white_list = settings.WHITE_LIST
 
 
 def count_labels(labels):
@@ -260,3 +263,57 @@ def truncate(array, minimum):
     for i, row in enumerate(array):
         array[i] = row[:minimum]
     return array
+
+
+def compute_weights(ds_name, emotions):
+
+    header = "["+ds_name+"]"
+    print(header+" Creating balanced weights...")
+    train_ints = [emotion.argmax() for emotion in emotions]
+    class_weights = class_weight.compute_class_weight('balanced',
+                                                      np.unique(train_ints),
+                                                      train_ints)
+    labels = get_labels(ds_name)
+    print("["+str(ds_name)+"] (LABEL) class weight:")
+    for i in range(num_classes):
+        temp = header+" ("+str(labels[i])+") "+str(class_weights[i])
+        print(temp)
+    class_weights_dict = dict(enumerate(class_weights))
+
+    return class_weights_dict
+
+
+def filter_labels(ds_name, faces, emotions, split_counts=[]):
+
+    rem_indices = []
+    rem_split_indices = []
+    labels = get_labels(ds_name)
+
+    # remove split_counts of expressions not white listed
+    for i, emotion in enumerate(emotions):
+        if labels[emotion] not in white_list:
+            rem_indices.append(i)
+
+    # remove split_counts of expressions not white listed
+    faces = np.delete(faces, rem_indices, axis=0)
+    emotions = np.delete(emotions, rem_indices, axis=0)
+
+    if split_counts != []:
+        for i in range(len(labels)):
+            if labels[i] not in white_list:
+                rem_split_indices.append(i)
+        split_counts = np.delete(split_counts, rem_split_indices, axis=0)
+
+    return faces, emotions, split_counts
+
+
+def convert_labels(ds_name, preds):
+
+    # number to string label
+    labels = get_labels(ds_name)
+    for i, pred in enumerate(preds):
+        # index to string to new index
+        if preds[i] != white_list.index(labels[pred]):
+            preds[i] = white_list.index(labels[pred])
+
+    return preds

@@ -151,7 +151,7 @@ for i, ds_name in enumerate(ds_names):
     # val_faces, val_labels = shuffle_in_unison(val_faces, val_labels)
     test_faces, test_labels = shuffle_in_unison(test_faces, test_labels)
 
-    model_weight = "/home/ubuntu/Repos/fer_tools/ltnet/snapshot/train_fer_iter_100000.caffemodel"
+    model_weight = "/home/ubuntu/Repos/fer_tools/ltnet/snapshot/fer2013_95000.caffemodel"
     device_no = -1
     print("LOG<<" + model_weight)
     # accuracy = eval_validation(model_weight,
@@ -179,15 +179,24 @@ for i, ds_name in enumerate(ds_names):
     f = open(f_name, "w")
     correct = 0
     for j, face in enumerate(test_faces):
-        preds.append(predictor.get_emoti_from_img(face))
-        print(preds[-1])
-        if preds[-1] == test_labels[j]:
-            correct += 1
-        f.write(str(preds[-1])+"\n")
-        folder_2 = os.path.join(folder, str(preds[-1]))
+        pred = predictor.get_emoti_from_img(face)
+        preds.append(pred)
+        print(pred)
+        # plt.imshow()
+
+        # if pred == test_labels[j]:
+        #     correct += 1
+        # f.write(str(preds[-1])+"\n")
+        # folder_2 = os.path.join(folder, str(preds))
         face = np.squeeze(face, axis=-1)
-        filename = os.path.join(folder_2, str(j)+".jpg")
-        plt.imsave(filename, face, cmap="gray")
+        # filename = os.path.join(folder_2, str(j)+".jpg")
+        # plt.imsave(filename, face, cmap="gray")
+        # cv2.imshow(str(test_labels[j])+" || "+str(pred), face)
+        cv2.imshow("yo", face)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cv2.destroyAllWindows()
     f.close()
     print(header+" Preds csv saved.")
     accuracy = float(correct)/float(len(test_labels))

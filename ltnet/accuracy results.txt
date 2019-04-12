@@ -1,0 +1,36 @@
+iter 15000
+Correct: 0.15 (1069/7178)
+
+iter 65000
+Correct: 0.16 (1180/7178)
+
+iter 70000
+Correct: 0.17 (1189/7178)
+
+iter 75000:
+Correct: 0.17 (1192/7178)
+
+iter 80000:
+Correct: 0.17 (1220/7178)
+
+iter 85000:
+Correct: 0.17 (1205/7178)
+
+iter 90000:
+Correct: 0.17 (1222/7178)
+
+iter 95000:
+Correct: 0.17 (1233/7178)
+
+iter 100000:
+Correct: 0.17 (1206/7178)
+
+iter 200000:
+Correct: 0.17 (1227/7178)
+
+max iter: 300000
+
+affectnet 0.469399
+ExpW 0.332607
+FER2013 0.250557 # acc = 0.250488
+KDEF 0.142857

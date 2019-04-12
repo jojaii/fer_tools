@@ -10,6 +10,7 @@ from .common import get_class_to_arg, adjust_label, encode_onehot
 
 num_classes = 7
 
+
 class DSManager(object):
 
     def __init__(self, ds_name='FER2013',
@@ -269,7 +270,8 @@ class DSManager(object):
         self.faces = faces
         self.emotions = np.asarray(emotions)
         self.groups = np.asarray(groups)
-        self.split_counts = split_counts
+        # TODO: propagate change to affected files
+        self.split_counts = np.asarray(split_counts)
 
 
     def _load_FERplus(self):
@@ -372,9 +374,9 @@ if __name__ == '__main__':
     csv_name = str(ds_name)+"_"+str(input_shape[0])+".csv"
     csv_path = os.path.join(ds_root, ds_name, csv_name)
     test_train = DSManager(ds_name,
-                              ds_root=path,
-                              image_size=input_shape[:2],
-                              csv_output=csv_path)
+                           ds_root=path,
+                           image_size=input_shape[:2],
+                           csv_output=csv_path)
     faces, emotions = test_train.get_data(ds_name)
 
     emotions = encode_onehot(emotions)

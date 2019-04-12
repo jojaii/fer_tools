@@ -10,7 +10,7 @@ layer {
   }
   multilabel_image_data_param {
     shuffle:true
-    source: "../data/fer2013_caffe.txt"
+    source: "../data/all_images.txt"
     batch_size: 128
     root_folder: "/home/ubuntu/Repos/fer_tools/"
     label_num: 4

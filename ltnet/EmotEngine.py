@@ -105,8 +105,6 @@ class EmotEngine():
     #     return prob
 
     def get_emoti_from_img(self, image):
-        # image = np.squeeze(image, axis=-1)
-        # image = np.stack((image,)*3, axis=-1)
         image = caffe.io.resize_image(image, self.src_size)
         image = self.crop_center(image)
         transformed_img = self.transformer.preprocess(self.input_data_str,

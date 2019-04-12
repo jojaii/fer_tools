@@ -1,10 +1,11 @@
 
 import os
+import settings
+import argparse
 import itertools
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import argparse
+import matplotlib.pyplot as plt
 
 from sklearn import svm, datasets
 from sklearn.model_selection import train_test_split
@@ -20,7 +21,21 @@ parser.add_argument("--thresh", nargs=1, type=float, metavar="<thresh>",
 args = parser.parse_args()
 
 
-labels = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
+# TODO: these should be arguments
+bin_root = settings.BIN_ROOT
+test_ds_names = settings.TEST_DATASET_NAMES
+model_ds_names = list(settings.MODEL_PATHS.keys())
+f_preds = settings.PREDS_PATHS
+f_probs = settings.PROBS_PATHS
+weight_type = settings.WEIGHT_TYPE
+labels = settings.WHITE_LIST
+num_classes = len(labels)
+# ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
+thresh = args.thresh[0]
+
+preds = pd.read_csv(os.path.join(bin_root, f_preds))
+probs = pd.read_csv(os.path.join(bin_root, f_probs))
+
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -58,30 +73,16 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
 
 
-# TODO: these should be arguments
-f_root = "bin"
-ds_base = 'SFEW'
-f_preds = "SFEW_preds_20_bw.csv"
-f_probs = "SFEW_probs_20_bw.csv"
-type = "bw"
-# f_path = os.path.join(f_root, f_preds)
-ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF']
-# ds_names = ['FER2013']
-thresh = args.thresh[0]
-preds = pd.read_csv(os.path.join(f_root, f_preds))
-probs = pd.read_csv(os.path.join(f_root, f_probs))
-
-print("TEST DATA: "+ds_base)
-for ds_name in ds_names:
+print("TEST DATA: %s" % (test_ds_names))
+for ds_name in model_ds_names:
     y_true = [int(x) for x in preds["actual"].tolist()]
     y_preds = [int(x) for x in preds[ds_name].tolist()]
     y_probs = [float(x) for x in probs[ds_name].tolist()]
     y_preds = np.asarray(y_preds)
     y_true = np.asarray(y_true)
     del_indexes = []
-    num_classes = 7
 
-    # filter out predictions less with classification less than threshold
+    # filter out predictions with classification less than threshold
     for i, prob in enumerate(y_probs):
         if prob < thresh:
             del_indexes.append(i)
@@ -91,12 +92,12 @@ for ds_name in ds_names:
     # Compute confusion matrix
     cnf_matrix = confusion_matrix(y_true, y_preds, labels=range(num_classes))
     np.set_printoptions(precision=2)
-    title = "SFEW_"+ds_name+"_"+type+"_"+str(int(thresh*100))
+    title = "SFEW_"+ds_name+"_"+weight_type+"_"+str(int(thresh*100))
     output_title = title + ".png"
 
     plot_confusion_matrix(cnf_matrix, classes=labels, normalize=True, title=title)
 
-    plt.savefig(os.path.join(f_root, title))
+    plt.savefig(os.path.join(bin_root, title))
     plt.close()
     # plt.show()
     p_mac, r_mac, f_mac, s_mac = precision_recall_fscore_support(y_true,

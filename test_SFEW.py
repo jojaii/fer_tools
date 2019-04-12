@@ -6,6 +6,9 @@ Github: https://github.com/oarriaga
 Description: Train emotion classification model
 """
 import os
+import cv2
+import settings
+import datetime
 # # uncomment to run on CPU
 # os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
@@ -13,8 +16,29 @@ from utils.data_manager import DSManager
 import numpy as np
 from utils.preprocessor import preprocess_input
 from keras.models import load_model
-import cv2
+from utils.common import filter_labels, convert_labels
 
+
+m_paths = settings.MODEL_PATHS
+model_ds_names = list(m_paths.keys())
+test_ds_names = settings.TEST_DATASET_NAMES
+ds_names = model_ds_names + test_ds_names
+input_shape = settings.INPUT_SHAPE
+num_classes = settings.NUM_CLASSES
+ds_root = settings.DATASET_ROOT
+bin_root = settings.BIN_ROOT
+split = settings.SPLIT
+split_str = str(int(split*100))
+undersample = settings.UNDERSAMPLE_FLAG
+weight_type = settings.WEIGHT_TYPE
+train_on_all = settings.TRAIN_ON_ALL
+m_paths = settings.MODEL_PATHS
+# np.set_printoptions(threshold=np.nan)
+m_root = settings.MODEL_ROOT
+np.set_printoptions(linewidth=np.inf)
+
+accuracies = []
+ds_dict = {}
 
 def keras_load(m_path):
     model = load_model(m_path)
@@ -37,46 +61,20 @@ def keras_test(model, data):
     return preds, probs
 
 
-np.set_printoptions(threshold=np.nan)
-np.set_printoptions(linewidth=np.inf)
-ds_root = '/home/ubuntu/Desktop'
-# ds_names = ['AffectNet', 'ExpW', 'FER2013', 'KDEF', 'SFEW']
-ds_names = ['FER2013', 'SFEW']
-
-m_root = "models"
-m_names = []
-# m_paths = ["FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5"]
-m_paths = ['fer2013_mini_XCEPTION.110-0.65.hdf5']
-# m_paths = ["AffectNet_64_10_bw_mini_XCEPTION.30-0.68.hdf5",
-#            "ExpW_64_10_bw_mini_XCEPTION.13-0.56.hdf5",
-#            "FER2013_64_10_bw_mini_XCEPTION.73-0.64.hdf5",
-#            "KDEF_64_10_bw_mini_XCEPTION.47-0.22.hdf5"]
-# m_paths = ["AffectNet_64_20_bw_mini_XCEPTION.26-0.71.hdf5",
-#            "FER2013_64_20_bw_mini_XCEPTION.57-0.61.hdf5",
-#            "KDEF_64_20_bw_mini_XCEPTION.45-0.20.hdf5",
-#            "ExpW_64_20_bw_mini_XCEPTION.39-0.55.hdf5"]
-# m_paths = ["AffectNet_64_10_us_mini_XCEPTION.82-0.55.hdf5",
-#            "FER2013_64_10_us_mini_XCEPTION.57-0.54.hdf5",
-#            "KDEF_64_10_us_mini_XCEPTION.67-0.23.hdf5",
-#            "ExpW_64_10_us_mini_XCEPTION.56-0.42.hdf5"]
-# m_paths = ["AffectNet_64_20_us_mini_XCEPTION.85-0.58.hdf5",
-#            "FER2013_64_20_us_mini_XCEPTION.45-0.48.hdf5",
-#            "KDEF_64_20_us_mini_XCEPTION.56-0.19.hdf5",
-#            "ExpW_64_20_us_mini_XCEPTION.42-0.42.hdf5"]
-
-input_shape = (64, 64)
-split = .2
-type = "bw"
-accuracies = []
-ds_dict = {}
-
 # LOAD DATASETS INTO DICTIONARY
 print("Loading datasets...")
 for i, ds_name in enumerate(ds_names):
-    if ds_name == "SFEW":
+
+    if ds_name in test_ds_names:
 
         # load/create csv
-        csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_"+type+".csv"
+        if undersample:
+            csv_name = str(ds_name)+"_"+str(input_shape[0])+"_" + \
+                    str(int(split*100))+"_us.csv"
+        else:
+            csv_name = str(ds_name)+"_"+str(input_shape[0])+"_" + \
+                    str(int(split*100))+".csv"
+
         header = "["+str(ds_name)+"]"
         # TODO: default input for csv_file
         data_loader = DSManager(ds_name,
@@ -93,25 +91,22 @@ for i, ds_name in enumerate(ds_names):
             data_loader.load_split_CSV()
 
         # load train, test, val
-        data_loader.faces = preprocess_input(data_loader.faces)
-        ds_dict[ds_name] = [data_loader.faces,
-                            data_loader.emotions,
+        faces, emotions = (data_loader.faces, data_loader.emotions)
+        faces, emotions, _ = filter_labels(ds_name, faces, emotions)
+        emotions = convert_labels(ds_name, emotions)
+        ds_dict[ds_name] = [preprocess_input(faces),
+                            emotions,
                             [],
                             {}]
-    else:
-        csv_name = str(ds_name)+"_"+str(input_shape[0])+"_"+str(int(split*100))+"_"+type+".csv"
+        print(header + " Removing expressions not in white list...")
+        del(data_loader)
+    if ds_name in model_ds_names:
         header = "["+str(ds_name)+"]"
-        data_loader = DSManager(ds_name,
-                        ds_root=ds_root,
-                        image_size=input_shape[:2],
-                        csv_file=csv_name)
-
-        m_path = os.path.join(m_root, m_paths[i])
+        m_path = os.path.join(m_root, m_paths[ds_name])
         ds_dict[ds_name] = [[],
                             [],
                             keras_load(m_path)]
 
-    del(data_loader)
 
 
 print("---- Multi-labelling datasets")
@@ -147,7 +142,11 @@ for j, ds_name2 in enumerate(ds_names):
             all_probs = [str(k)+","+str(probs[iter]) for iter, k in enumerate(all_probs)]
 
 # open multi-labelled csv
-f_name = "bin/"+ds_name+"_preds_"+str(int(split*100))+"_"+type+".csv"
+now = datetime.datetime.now()
+f_name = "%s/%s_preds_%d_%s_%d-%d-%d-%d.csv" % (bin_root, ds_name,
+                                                int(split*100), weight_type,
+                                                now.year, now.month,
+                                                now.hour, now.minute)
 
 print(header+" Saving all predictions to " +
       f_name + ".\n Please wait...")
@@ -162,7 +161,11 @@ del(all_labels)
 # close multi-labelled csv
 
 # open probs csv
-f_name = "bin/"+ds_name+"_probs_"+str(int(split*100))+"_"+type+".csv"
+f_name = "%s/%s_probs_%d_%s_%d-%d-%d-%d.csv" % (bin_root, ds_name,
+                                                int(split*100), weight_type,
+                                                now.year, now.month,
+                                                now.hour, now.minute)
+# f_name = "bin/"+ds_name+"_probs_"+str(int(split*100))+"_"+weight_type+".csv"
 
 print(header+" Saving all probabilities to " +
       f_name + ".\n Please wait...")
