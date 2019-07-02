@@ -3,7 +3,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import CSVLogger, ModelCheckpoint, EarlyStopping
 from keras.callbacks import ReduceLROnPlateau
 from .preprocessor import preprocess_input
-from .cnn import mini_XCEPTION
+from .cnn import mini_XCEPTION, color_XCEPTION
 
 
 class ModelManager(object):
@@ -28,6 +28,7 @@ class ModelManager(object):
         self.test_data = []
         self.val_data = []
         self.model = mini_XCEPTION(self.img_shape, self.num_classes)
+        # self.model = color_XCEPTION(self.img_shape, self.num_classes)
         self.model.compile(optimizer='adam', loss='categorical_crossentropy',
                            metrics=['accuracy'])
 

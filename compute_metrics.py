@@ -72,7 +72,7 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted sentiment')
     plt.tight_layout()
 
-
+# TODO: check if "prediction" is still being read by this file 
 print("TEST DATA: %s" % (test_ds_names))
 for ds_name in model_ds_names:
     y_true = [int(x) for x in preds["actual"].tolist()]

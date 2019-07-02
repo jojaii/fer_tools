@@ -1,7 +1,7 @@
 # # uncomment to run on CPU
 # os.environ['CUDA_VISIBLE_DEVICES'] = ''
 # splitting does not rely on weight type
-# it only relies on whether the data is undersample or not
+# it only relies on whether the data was undersampled or not
 import os
 import settings
 from keras.preprocessing.image import ImageDataGenerator
@@ -19,7 +19,7 @@ data_generator = ImageDataGenerator(featurewise_center=False,
                                     horizontal_flip=True)
 
 # TODO: should be imported from config file
-datasets = settings.DATASET_NAMES
+datasets = settings.TRAIN_DATASET_NAMES
 input_shape = settings.INPUT_SHAPE
 num_classes = settings.NUM_CLASSES
 ds_root = settings.DATASET_ROOT
@@ -75,9 +75,9 @@ for i, ds_name in enumerate(datasets):
     # combine classes, remove groupings
     combined_faces, labels = combine_classes(grouped_faces)
     if undersample is True:
-        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+split_str+"_us.csv"
+        csv_name = os.path.join(ds_root, ds_name+"_"+str(input_shape[0])+"_"+split_str+"_us.csv")
     else:
-        csv_name = ds_root+ds_name+"_"+str(input_shape[0])+"_"+split_str+".csv"
+        csv_name = os.path.join(ds_root, ds_name+"_"+str(input_shape[0])+"_"+split_str+".csv")
     generate_csv(ds_name, csv_name, num_classes, combined_faces, labels, classes_split_labels, classes_split_counts)
 
     del(data_loader)

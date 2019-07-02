@@ -1,6 +1,7 @@
 import numpy as np
 import settings
 from sklearn.utils import class_weight
+# from collections import Counter
 # TODO: define fxn inputs and outputs
 
 # import settings
@@ -50,56 +51,6 @@ def get_subsets(minimum, faces, emotions, labels):
 
     return subsets_faces, subsets_emotions
 
-
-# def split_data(x, y, split):
-#     # split data to train, test, and val according and percentage
-#     # input: faces_subset, labels_subset, split_percentage
-#     # output: train_data, val_data, test_data
-#     num_samples = len(x)
-#     num_val_samples = int(round(split*num_samples))
-#     num_train_samples = int(round((1 - split*2)*num_samples))
-#     train_x = x[:num_train_samples]
-#     train_y = y[:num_train_samples]
-#     val_x = x[num_train_samples:num_train_samples+num_val_samples]
-#     val_y = y[num_train_samples:num_train_samples+num_val_samples]
-#     test_x = x[num_train_samples+num_val_samples:]
-#     test_y = y[num_train_samples+num_val_samples:]
-#     train_data = (train_x, train_y)
-#     val_data = (val_x, val_y)
-#     test_data = (test_x, test_y)
-
-#     return train_data, val_data, test_data
-
-
-# def strat_sample(faces, emotions, split):
-#     # input: faces array (array of numpy arrays),
-#     #        emotions array (array of numpy arrays),
-#     #        split int percentage of train/test data
-#     # output: train_data - tuple of two numpy arrays
-#     #         val_data - tuple of two numpy arrays
-#     #         test_data - tuple of two numpy arrays
-#     for i in range(num_classes):
-#         # split according to class
-#         temp_train, temp_val, temp_test = split_data(faces[i],
-#                                                      emotions[i],
-#                                                      split)
-#         if i == 0:
-#             train_faces, train_emotions = temp_train
-#             val_faces, val_emotions = temp_val
-#             test_faces, test_emotions = temp_test
-#         else:
-#             train_faces = np.vstack((train_faces, temp_train[0]))
-#             train_emotions = np.vstack((train_emotions, temp_train[1]))
-#             val_faces = np.vstack((val_faces, temp_val[0]))
-#             val_emotions = np.vstack((val_emotions, temp_val[1]))
-#             test_faces = np.vstack((test_faces, temp_test[0]))
-#             test_emotions = np.vstack((test_emotions, temp_test[1]))
-
-#     train_data = (train_faces, train_emotions)
-#     val_data = (val_faces, val_emotions)
-#     test_data = (test_faces, test_emotions)
-
-    return train_data, val_data, test_data
 
 def split_array(array, split):
     # split data to train, test, and val according and percentage
@@ -204,9 +155,9 @@ def adjust_label(label):
     # change AffectNet labels to FER2013 labels
     # TODO: raise exception if label not in range?
     new_label = {6: 0, 5: 1,
-                    4: 2, 1: 3,
-                    2: 4, 3: 5,
-                    0: 6}
+                 4: 2, 1: 3,
+                 2: 4, 3: 5,
+                 0: 6}
     return new_label[label]
 
 
@@ -218,37 +169,40 @@ def encode_onehot(labels):
 
 def get_labels(ds_name):
     # TODO: set in settings.py
-    if ds_name in ['FER2013', 'ExpW', 'ExpWCSV', 'SFEW']:
+    if ds_name in ['FER2013', 'ExpW', 'AffectNet', 'SFEW', 'FERcolor']:
         return {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy',
                 4: 'sad', 5: 'surprise', 6: 'neutral'}
     elif ds_name == 'imdb':
         return {0: 'woman', 1: 'man'}
     elif ds_name in ['KDEF', 'KDEFCSV']:
         return {0: 'AN', 1: 'DI', 2: 'AF', 3: 'HA', 4: 'SA', 5: 'SU', 6: 'NE'}
-    elif ds_name in ['AffectNet', 'AffectNetCSV']:
-        return {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise',
-                4: 'fear', 5: 'disgust', 6: 'anger'}
+    # this should no longer apply, labels already adjusted before even reading
+    # elif ds_name in ['AffectNet', 'AffectNetCSV']:
+    #     return {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise',
+    #             4: 'fear', 5: 'disgust', 6: 'anger'}
     else:
         raise Exception('Invalid dataset name')
 
 
 def get_class_to_arg(ds_name='FER2013'):
     # TODO: set in settings.py
-    if ds_name in ['FER2013', 'ExpW', 'ExpWCSV', 'SFEW']:
+    if ds_name in ['FER2013', 'ExpW', 'ExpWCSV', 'SFEW', 'AffectNet']:
         return {'angry': 0, 'disgust': 1, 'fear': 2, 'happy': 3, 'sad': 4,
                 'surprise': 5, 'neutral': 6}
     elif ds_name == 'imdb':
         return {'woman': 0, 'man': 1}
     elif ds_name in ['KDEF', 'KDEFCSV']:
         return {'AN': 0, 'DI': 1, 'AF': 2, 'HA': 3, 'SA': 4, 'SU': 5, 'NE': 6}
-    elif ds_name in ['AffectNet', 'AffectNetCSV']:
-        return {'neutral': 0, 'happy': 1, 'sad': 2, 'surprise': 3,
-                'fear': 4, 'disgust': 5, 'anger': 6}
+    # TODO: propagate changes to other files, especially data manager
+    # elif ds_name in ['AffectNet', 'AffectNetCSV']:
+    #     return {'neutral': 0, 'happy': 1, 'sad': 2, 'surprise': 3,
+    #             'fear': 4, 'disgust': 5, 'anger': 6}
     else:
         raise Exception('Invalid dataset name')
 
 
 # GROUP (according to class)
+# improve with np.argsort() <- prints out correct indices
 def group(array, labels, num_classes):
     grouped_classes = [[] for x in range(num_classes)]
     for i, label in enumerate(labels):
@@ -283,37 +237,36 @@ def compute_weights(ds_name, emotions):
     return class_weights_dict
 
 
-def filter_labels(ds_name, faces, emotions, split_counts=[]):
+def filter_labels(ds_name, faces, emotions, split_counts):
 
     rem_indices = []
     rem_split_indices = []
     labels = get_labels(ds_name)
 
-    # remove split_counts of expressions not white listed
+    # get all indices of elements with expressions not white listed
     for i, emotion in enumerate(emotions):
         if labels[emotion] not in white_list:
             rem_indices.append(i)
 
-    # remove split_counts of expressions not white listed
+    for i, split_count in enumerate(split_counts):
+        if labels[i] not in white_list:
+            rem_split_indices.append(i)
+
     faces = np.delete(faces, rem_indices, axis=0)
     emotions = np.delete(emotions, rem_indices, axis=0)
-
-    if split_counts != []:
-        for i in range(len(labels)):
-            if labels[i] not in white_list:
-                rem_split_indices.append(i)
-        split_counts = np.delete(split_counts, rem_split_indices, axis=0)
+    split_counts = np.delete(split_counts, rem_split_indices, axis=0)
 
     return faces, emotions, split_counts
 
 
-def convert_labels(ds_name, preds):
+def convert_labels(ds_name, emotions):
 
     # number to string label
     labels = get_labels(ds_name)
-    for i, pred in enumerate(preds):
-        # index to string to new index
-        if preds[i] != white_list.index(labels[pred]):
-            preds[i] = white_list.index(labels[pred])
 
-    return preds
+    for i, emotion in enumerate(emotions):
+        # index to string to new index
+        if emotion != white_list.index(labels[emotion]):
+            emotions[i] = white_list.index(labels[emotion])
+
+    return emotions

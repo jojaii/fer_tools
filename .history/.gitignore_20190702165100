@@ -1,0 +1,9 @@
+**/.ipynb_checkpoints
+__pycache__/
+data/*
+**nohup.out
+snapshot/*
+ltnet/snapshot/*
+model/*
+**train_7_fixed.txt
+**train_4_fixed.txt

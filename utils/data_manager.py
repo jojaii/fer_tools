@@ -5,6 +5,7 @@ from scipy.io import loadmat
 import pandas as pd
 import numpy as np
 import os
+import sys
 import cv2
 from .common import get_class_to_arg, adjust_label, encode_onehot
 
@@ -16,11 +17,13 @@ class DSManager(object):
     def __init__(self, ds_name='FER2013',
                  ds_root="/home/Ubuntu/Datasets",
                  image_size=(64, 64),
-                 csv_file=""):
+                 csv_file="",
+                 color_flag=False):
         self.ds_name = ds_name
         self.ds_root = ds_root
         self.image_size = image_size
         self.csv_file = csv_file
+        self.color_flag = color_flag
 
         self.faces = []
         self.emotions = []
@@ -57,6 +60,7 @@ class DSManager(object):
         data = pd.read_csv(os.path.join(self.ds_root, "fer2013.csv"))
         # data = pd.read_csv(os.path.join(self.ds_root, "fer2013_test.csv"))
         pixels = data['pixels'].tolist()
+        # TODO: color option
         emotions = [int(x) for x in data['emotion'].tolist()]
 
         width, height = 48, 48
@@ -97,6 +101,7 @@ class DSManager(object):
                 pass
             else:
                 print("Processing "+str(file_paths[i]))
+                # TODO: color option
                 image_array = cv2.imread(os.path.join(ds_root,
                                          file_paths[i]),
                                          cv2.IMREAD_GRAYSCALE)
@@ -137,6 +142,7 @@ class DSManager(object):
         files = []
         for file_arg, file_path in enumerate(file_paths):
             print("Processing "+str(file_path.split("/")[-1]))
+            # TODO: color option
             image_array = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
             image_array = cv2.resize(image_array, (y_size, x_size))
             faces[file_arg] = image_array
@@ -181,6 +187,7 @@ class DSManager(object):
 
             if face_confidence > threshold:
                 print("Processing "+str(file_name))
+                # TODO: color option
                 image_array = cv2.imread(os.path.join(ds_root, file_name),
                                          cv2.IMREAD_GRAYSCALE)
                 gray_face = image_array[face_top:face_bottom,
@@ -198,7 +205,7 @@ class DSManager(object):
         self.emotions = np.asarray(emotions)
 
     def generate_csv(self):
-        np.set_printoptions(threshold=np.nan)
+        np.set_printoptions(threshold=sys.maxsize)
         np.set_printoptions(linewidth=np.inf)
 
         print("Saving " + self.ds_name + " dataset to " +
@@ -208,6 +215,7 @@ class DSManager(object):
         f.write("emotion,face\n")
         for i, emotion in enumerate(self.emotions):
             f.write(str(emotion)+",")
+            # TODO: color option
             face_pixels = ' '.join(map(str,
                                    (self.faces[i].astype(int)).flatten()))
             f.write(str(face_pixels+"\n"))
@@ -228,6 +236,7 @@ class DSManager(object):
 
         faces = []
         for pixel_sequence in pixels:
+            # TODO: color option
             face = [int(pixel) for pixel in pixel_sequence.split(' ')]
             face = np.asarray(face).reshape(self.image_size[0],
                                             self.image_size[1])
@@ -252,13 +261,16 @@ class DSManager(object):
         faces = []
         for pixel_sequence in pixels:
             face = [int(pixel) for pixel in pixel_sequence.split(' ')]
-            face = np.asarray(face).reshape(self.image_size[0],
-                                            self.image_size[1])
-            face = cv2.resize(face.astype('uint8'), self.image_size)
+            # TODO: if grayscale, no third dimension
+            # color has third, so wxh changed to image_size
+            face = np.asarray(face).reshape(self.image_size)
+            face = face.astype('uint8')
+            # face = cv2.resize(face.astype('uint8'), self.image_size)
             faces.append(face.astype('float32'))
 
         faces = np.asarray(faces)
-        faces = np.expand_dims(faces, -1)
+        # TODO: on if grayscale, off if not
+        # faces = np.expand_dims(faces, -1)
         emotions = [int(x) for x in data['emotion'].tolist()]
         groups = [int(x) for x in data['group'].tolist()]
 
@@ -285,6 +297,7 @@ class DSManager(object):
 
         faces = []
         for pixel_sequence in pixels:
+            # TODO: color option
             face = [int(pixel) for pixel in pixel_sequence.split(' ')]
             face = np.asarray(face).reshape(width, height)
             face = cv2.resize(face.astype('uint8'), self.image_size)
@@ -354,6 +367,7 @@ class DSManager(object):
                     f_name = os.path.join(folder, filename)
                     label = folder.split('/')[-1].lower()
                     labels.append(classes[label])
+                    # TODO: color option
                     face = cv2.imread(f_name,
                                       cv2.IMREAD_GRAYSCALE)
                     face = cv2.resize(face.astype('uint8'),
@@ -365,10 +379,28 @@ class DSManager(object):
         self.faces = faces
         self.emotions = np.asarray(labels)
 
+    def _load_FERcolor(self):
+        ds_root = os.path.join(self.ds_root, self.ds_name) 
+        labels, faces = [], []
+        for folder, subfolders, filenames in os.walk(ds_root):
+            for filename in filenames:
+                if filename.lower().endswith(('.png')):
+                    f_name = os.path.join(folder, filename)
+                    label = folder.split('/')[-1].lower()
+                    labels.append(int(label))
+                    # TODO: color option
+                    face = cv2.imread(f_name)  # BGR
+                    face = cv2.resize(face.astype('uint8'),
+                                      self.image_size)
+                    faces.append(face.astype('float32'))
+
+        self.faces = np.asarray(faces)
+        self.emotions = np.asarray(labels)
+
 
 if __name__ == '__main__':
-    input_shape = (64, 64, 1)
-    ds_name = 'KDEF'
+    input_shape = (64, 64, 3)
+    ds_name = 'FERcolor'
     ds_root = "/home/ubuntu/Datasets"
     path = os.path.join(ds_root, ds_name)
     csv_name = str(ds_name)+"_"+str(input_shape[0])+".csv"
@@ -376,31 +408,6 @@ if __name__ == '__main__':
     test_train = DSManager(ds_name,
                            ds_root=path,
                            image_size=input_shape[:2],
-                           csv_output=csv_path)
-    faces, emotions = test_train.get_data(ds_name)
-
-    emotions = encode_onehot(emotions)
-    # print(faces.shape)
-    # print(emotions.shape)
-    # # faces, emotions = data_loader.get_data()
-
-    # ds_name = 'AffectNet'
-    # ds_root = "/home/ubuntu/Datasets"
-    # path = os.path.join(ds_root, ds_name)
-    # csv_name = str(ds_name)+"_"+str(input_shape[0])+".csv"
-    # csv_path = os.path.join(ds_root, ds_name, csv_name)
-    # test_train = DataManager(ds_name,
-    #                          ds_path=path,
-    #                          image_size=input_shape[:2],
-    #                          csv_output=csv_path)
-    # new_faces, new_emotions = test_train.get_data()
-
-    # print(new_faces.shape)
-    # print(new_emotions.shape)
-
-    # faces = np.concatenate((faces, new_faces),
-    #                        axis=0)
-    # emotions = np.concatenate((emotions, new_emotions),
-    #                           axis=0)
-    # print(faces.shape)
-    # print(emotions.shape)
+                           csv_file=csv_path)
+    test_train.get_data()
+    test_train.generate_csv()
