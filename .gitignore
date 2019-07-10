@@ -7,3 +7,4 @@ ltnet/snapshot/*
 model/*
 **train_7_fixed.txt
 **train_4_fixed.txt
+**/.history
